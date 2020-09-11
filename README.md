@@ -46,4 +46,9 @@ import MarkerClusterer from '@googlemaps/markerclustererplus';
 const markerCluster = new MarkerClusterer(map, markers);
 ```
 
-View the package in action [here](https://googlemaps.github.io/js-markerclustererplus/examples/index.html).
+View the package in action:
+
+* [Simple Example](https://googlemaps.github.io/js-markerclustererplus/examples/simple_example.html)
+* [Advanced Example](https://googlemaps.github.io/js-markerclustererplus/examples/advanced_example.html)
+* [Events Example](https://googlemaps.github.io/js-markerclustererplus/examples/events_example.html)
+* [Speed Test Example](https://googlemaps.github.io/js-markerclustererplus/examples/speed_test_example.html)
