@@ -195,7 +195,7 @@ export class ClusterIcon extends OverlayViewSafe {
     this.boundsChangedListener_ = google.maps.event.addListener(
       this.getMap(),
       "bounds_changed",
-      function() {
+      () => {
         cDraggingMapByCluster = cMouseDownInCluster;
       }
     );
@@ -209,12 +209,12 @@ export class ClusterIcon extends OverlayViewSafe {
     // But it doesn't work with earlier releases so do a version check.
     if (gmVersion >= 332) {
       // Ugly version-dependent code
-      google.maps.event.addDomListener(this.div_, "touchstart", e => {
+      google.maps.event.addDomListener(this.div_, "touchstart", (e) => {
         e.stopPropagation();
       });
     }
 
-    google.maps.event.addDomListener(this.div_, "click", e => {
+    google.maps.event.addDomListener(this.div_, "click", (e) => {
       cMouseDownInCluster = false;
       if (!cDraggingMapByCluster) {
         /**
@@ -234,7 +234,7 @@ export class ClusterIcon extends OverlayViewSafe {
           const theBounds = this.cluster_.getBounds();
           (mc.getMap() as google.maps.Map).fitBounds(theBounds);
           // There is a fix for Issue 170 here:
-          setTimeout(function() {
+          setTimeout(() => {
             (mc.getMap() as google.maps.Map).fitBounds(theBounds);
             // Don't zoom beyond the max zoom level
             if (mz !== null && mc.getMap().getZoom() > mz) {
@@ -346,7 +346,7 @@ export class ClusterIcon extends OverlayViewSafe {
       "text-decoration": this.style.textDecoration,
       "text-align": "center",
       width: coercePixels(this.style.width),
-      "line-height": coercePixels(this.style.textLineHeight)
+      "line-height": coercePixels(this.style.textLineHeight),
     };
 
     return `
@@ -367,17 +367,17 @@ export class ClusterIcon extends OverlayViewSafe {
     if (this.cluster_.getMarkerClusterer().getEnableRetinaIcons()) {
       dimensions = {
         width: coercePixels(this.style.width),
-        height: coercePixels(this.style.height)
+        height: coercePixels(this.style.height),
       };
     } else {
       const [Y1, X1, Y2, X2] = [
         -1 * spriteV,
         -1 * spriteH + this.style.width,
         -1 * spriteV + this.style.height,
-        -1 * spriteH
+        -1 * spriteH,
       ];
       dimensions = {
-        clip: `rect(${Y1}px, ${X1}px, ${Y2}px, ${X2}px)`
+        clip: `rect(${Y1}px, ${X1}px, ${Y2}px, ${X2}px)`,
       };
     }
 
@@ -385,7 +385,7 @@ export class ClusterIcon extends OverlayViewSafe {
       position: "absolute",
       top: coercePixels(spriteV),
       left: coercePixels(spriteH),
-      ...dimensions
+      ...dimensions,
     });
 
     return `<img alt="${this.sums_.text}" aria-hidden="true" src="${this.style.url}" style="${cssText}"/>`;
@@ -406,7 +406,7 @@ export class ClusterIcon extends OverlayViewSafe {
     this.anchorText_ = this.style.anchorText || [0, 0];
     this.anchorIcon_ = this.style.anchorIcon || [
       Math.floor(this.style.height / 2),
-      Math.floor(this.style.width / 2)
+      Math.floor(this.style.width / 2),
     ];
 
     this.className_ =
@@ -443,7 +443,7 @@ export class ClusterIcon extends OverlayViewSafe {
       "-khtml-user-select": "none",
       "-moz-user-select": "none",
       "-o-user-select": "none",
-      "user-select": "none"
+      "user-select": "none",
     });
   }
 

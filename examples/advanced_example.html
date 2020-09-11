@@ -103,22 +103,22 @@
             height: 35,
             url: "../images/people35.png",
             textColor: "#ff00ff",
-            textSize: 10
+            textSize: 10,
           }),
           MarkerClusterer.withDefaultStyle({
             width: 45,
             height: 45,
             url: "../images/people45.png",
             textColor: "#ff0000",
-            textSize: 11
+            textSize: 11,
           }),
           MarkerClusterer.withDefaultStyle({
             width: 55,
             height: 55,
             url: "../images/people55.png",
             textColor: "#ffffff",
-            textSize: 12
-          })
+            textSize: 12,
+          }),
         ],
         [
           MarkerClusterer.withDefaultStyle({
@@ -128,7 +128,7 @@
             anchorText: [-3, 0],
             anchorIcon: [27, 28],
             textColor: "#ff00ff",
-            textSize: 10
+            textSize: 10,
           }),
           MarkerClusterer.withDefaultStyle({
             url: "../images/conv40.png",
@@ -137,7 +137,7 @@
             anchorText: [-4, 0],
             anchorIcon: [36, 37],
             textColor: "#ff0000",
-            textSize: 11
+            textSize: 11,
           }),
           MarkerClusterer.withDefaultStyle({
             url: "../images/conv50.png",
@@ -146,8 +146,8 @@
             anchorText: [-5, 0],
             anchorIcon: [45, 46],
             textColor: "#0000ff",
-            textSize: 12
-          })
+            textSize: 12,
+          }),
         ],
         [
           MarkerClusterer.withDefaultStyle({
@@ -156,7 +156,7 @@
             height: 26,
             anchorIcon: [26, 15],
             textColor: "#ff00ff",
-            textSize: 10
+            textSize: 10,
           }),
           MarkerClusterer.withDefaultStyle({
             url: "../images/heart40.png",
@@ -164,33 +164,33 @@
             height: 35,
             anchorIcon: [35, 20],
             textColor: "#ff0000",
-            textSize: 11
+            textSize: 11,
           }),
           MarkerClusterer.withDefaultStyle({
             url: "../images/heart50.png",
             width: 50,
             height: 44,
             anchorIcon: [44, 25],
-            textSize: 12
-          })
+            textSize: 12,
+          }),
         ],
         [
           {
             width: 30,
             height: 30,
-            className: "custom-clustericon-1"
+            className: "custom-clustericon-1",
           },
           {
             width: 40,
             height: 40,
-            className: "custom-clustericon-2"
+            className: "custom-clustericon-2",
           },
           {
             width: 50,
             height: 50,
-            className: "custom-clustericon-3"
-          }
-        ]
+            className: "custom-clustericon-3",
+          },
+        ],
       ];
 
       var markerClusterer = null;
@@ -220,7 +220,7 @@
           );
           var marker = new google.maps.Marker({
             position: latLng,
-            icon: markerImage
+            icon: markerImage,
           });
           markers.push(marker);
         }
@@ -236,7 +236,7 @@
           maxZoom: zoom,
           gridSize: size,
           styles: styles[style],
-          clusterClass: style === 3 ? "custom-clustericon" : undefined
+          clusterClass: style === 3 ? "custom-clustericon" : undefined,
         });
       }
 
@@ -244,7 +244,7 @@
         map = new google.maps.Map(document.getElementById("map"), {
           zoom: 2,
           center: new google.maps.LatLng(39.91, 116.38),
-          mapTypeId: google.maps.MapTypeId.ROADMAP
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
         });
 
         var refresh = document.getElementById("refresh");

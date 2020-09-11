@@ -9,7 +9,8 @@
   "rules": {
     "no-var": 2,
     "prefer-arrow-callback": 2,
-    "@typescript-eslint/ban-ts-comment": 0
+    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/no-empty-function": 1
   },
   "env": {
     "browser": true,

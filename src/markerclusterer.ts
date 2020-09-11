@@ -387,7 +387,7 @@ export class MarkerClusterer extends OverlayViewSafe {
       }),
       google.maps.event.addListener(this.getMap(), "idle", () => {
         this.redraw_();
-      })
+      }),
     ];
   }
 
@@ -441,7 +441,7 @@ export class MarkerClusterer extends OverlayViewSafe {
         MarkerClusterer.withDefaultStyle({
           url: this.imagePath_ + (i + 1) + "." + this.imageExtension_,
           height: size,
-          width: size
+          width: size,
         })
       );
     }
@@ -922,7 +922,7 @@ export class MarkerClusterer extends OverlayViewSafe {
 
     // Remove the old clusters.
     // Do it in a timeout to prevent blinking effect.
-    setTimeout(function() {
+    setTimeout(() => {
       for (let i = 0; i < oldClusters.length; i++) {
         oldClusters[i].remove();
       }
@@ -1163,7 +1163,7 @@ export class MarkerClusterer extends OverlayViewSafe {
     return {
       text: count.toString(),
       index: index,
-      title: ""
+      title: "",
     };
   }
 
@@ -1183,7 +1183,7 @@ export class MarkerClusterer extends OverlayViewSafe {
       fontStyle: "normal",
       fontFamily: "Arial,sans-serif",
       backgroundPosition: "0 0",
-      ...overrides
+      ...overrides,
     };
   }
 }

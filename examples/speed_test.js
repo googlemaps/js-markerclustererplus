@@ -17,12 +17,12 @@ speedTest.markerClusterer = null;
 speedTest.markers = [];
 speedTest.infoWindow = null;
 
-speedTest.init = function() {
+speedTest.init = function () {
   var latlng = new google.maps.LatLng(39.91, 116.38);
   var options = {
     zoom: 2,
     center: latlng,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
   };
 
   speedTest.map = new google.maps.Map($("map"), options);
@@ -39,7 +39,7 @@ speedTest.init = function() {
   speedTest.showMarkers();
 };
 
-speedTest.showMarkers = function() {
+speedTest.showMarkers = function () {
   speedTest.markers = [];
 
   var type = 1;
@@ -85,7 +85,7 @@ speedTest.showMarkers = function() {
 
     var marker = new google.maps.Marker({
       position: latLng,
-      icon: markerImage
+      icon: markerImage,
     });
 
     var fn = speedTest.markerClickFunction(speedTest.pics[i], latLng);
@@ -97,8 +97,8 @@ speedTest.showMarkers = function() {
   window.setTimeout(speedTest.time, 0);
 };
 
-speedTest.markerClickFunction = function(pic, latlng) {
-  return function(e) {
+speedTest.markerClickFunction = function (pic, latlng) {
+  return function (e) {
     e.cancelBubble = true;
     e.returnValue = false;
     if (e.stopPropagation) {
@@ -133,19 +133,19 @@ speedTest.markerClickFunction = function(pic, latlng) {
   };
 };
 
-speedTest.clear = function() {
+speedTest.clear = function () {
   $("timetaken").innerHTML = "cleaning...";
   for (var i = 0, marker; (marker = speedTest.markers[i]); i++) {
     marker.setMap(null);
   }
 };
 
-speedTest.change = function() {
+speedTest.change = function () {
   speedTest.clear();
   speedTest.showMarkers();
 };
 
-speedTest.time = function() {
+speedTest.time = function () {
   $("timetaken").innerHTML = "timing...";
   var start = new Date();
   if ($("usegmm").checked) {

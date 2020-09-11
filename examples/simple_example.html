@@ -43,7 +43,7 @@
         var map = new google.maps.Map(document.getElementById("map"), {
           zoom: 3,
           center: center,
-          mapTypeId: google.maps.MapTypeId.ROADMAP
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
         });
 
         var markers = [];
@@ -54,7 +54,7 @@
             dataPhoto.longitude
           );
           var marker = new google.maps.Marker({
-            position: latLng
+            position: latLng,
           });
           markers.push(marker);
         }
