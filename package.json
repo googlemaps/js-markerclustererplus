@@ -62,7 +62,7 @@
     "typescript": "^4.0.2"
   },
   "publishConfig": {
-    "access": "restricted",
+    "access": "public",
     "registry": "https://wombat-dressing-room.appspot.com"
   }
 }
