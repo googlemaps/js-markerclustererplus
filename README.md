@@ -34,7 +34,7 @@ A version can be specified by using `https://unpkg.com/@googlemaps/markercluster
 
 ## Documentation
 
-The reference documentation can be found at this [link](https://googlemaps.github.io/js-markerclustererplus/docs/index.html).
+The reference documentation can be found at this [link](https://googlemaps.github.io/js-markerclustererplus/index.html).
 
 
 ## Example
