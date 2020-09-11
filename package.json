@@ -1,5 +1,5 @@
 {
-  "name": "@google/markerclustererplus",
+  "name": "@googlemaps/markerclustererplus",
   "version": "5.1.0",
   "description": "Creates and manages per-zoom-level clusters for large amounts of markers.",
   "keywords": [
@@ -22,9 +22,9 @@
     "dist/*",
     "images/*"
   ],
-  "main": "dist/markerclustererplus.umd.js",
-  "unpkg": "dist/markerclustererplus.min.js",
-  "module": "dist/markerclustererplus.esm.js",
+  "main": "dist/index.umd.js",
+  "unpkg": "dist/index.min.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "docs": "typedoc",

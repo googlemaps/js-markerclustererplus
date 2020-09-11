@@ -36,14 +36,14 @@ export default [
     ],
     output: [
       {
-        file: "dist/markerclustererplus.umd.js",
+        file: "dist/index.umd.js",
         format: "umd",
         sourcemap: true,
         exports: "default",
         name: "MarkerClusterer",
       },
       {
-        file: "dist/markerclustererplus.min.js",
+        file: "dist/index.min.js",
         format: "iife",
         sourcemap: true,
         exports: "default",
@@ -55,7 +55,7 @@ export default [
     input: "src/index.ts",
     plugins: [typescript(), commonjs(), babel(babelOptions)],
     output: {
-      file: "dist/markerclustererplus.dev.js",
+      file: "dist/index.dev.js",
       format: "iife",
       name: "MarkerClusterer",
     },
@@ -64,7 +64,7 @@ export default [
     input: "src/index.ts",
     plugins: [typescript()],
     output: {
-      file: "dist/markerclustererplus.esm.js",
+      file: "dist/index.esm.js",
       format: "esm",
       sourcemap: true,
       name: "MarkerClusterer",

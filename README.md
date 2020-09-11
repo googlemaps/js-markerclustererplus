@@ -1,6 +1,6 @@
 # Google Maps JavaScript MarkerClustererPlus
 
-[![npm](https://img.shields.io/npm/v/@google/markerclustererplus)](https://www.npmjs.com/package/@google/markerclustererplus)
+[![npm](https://img.shields.io/npm/v/@googlemaps/markerclustererplus)](https://www.npmjs.com/package/@googlemaps/markerclustererplus)
 ![Build](https://github.com/googlemaps/js-markerclustererplus/workflows/Build/badge.svg)
 ![Release](https://github.com/googlemaps/js-markerclustererplus/workflows/Release/badge.svg)
 [![codecov](https://codecov.io/gh/googlemaps/js-markerclustererplus/branch/main/graph/badge.svg)](https://codecov.io/gh/googlemaps/js-markerclustererplus)
@@ -12,23 +12,25 @@
 
 The library creates and manages per-zoom-level clusters for large amounts of markers.
 
+> **Note**: This library is the same as the existing library `@google/markerclustererplus`, but renamed and in its own repository. All future development will continue here.
+
 ## Install
 
-Available via npm as the package [@google/markerclustererplus](https://www.npmjs.com/package/@google/markerclustererplus).
+Available via npm as the package [@googlemaps/markerclustererplus](https://www.npmjs.com/package/@googlemaps/markerclustererplus).
 
-`npm i @google/markerclustererplus`
+`npm i @googlemaps/markerclustererplus`
 
 or
 
-`yarn add @google/markerclustererplus`
+`yarn add @googlemaps/markerclustererplus`
 
 Alternativly you may add the umd package directly to the html document using the unpkg link.
 
-`<script src="https://unpkg.com/@google/markerclustererplus/dist/markerclustererplus.min.js"></script>`
+`<script src="https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js"></script>`
 
 When adding via unpkg, the loader can be accessed at `MarkerClusterer`.
 
-A version can be specified by using `https://unpkg.com/@google/markerclustererplus@VERSION/dist/...`.
+A version can be specified by using `https://unpkg.com/@googlemaps/markerclustererplus@VERSION/dist/...`.
 
 ## Documentation
 
@@ -36,5 +38,12 @@ The reference documentation can be found at this [link](https://googlemaps.githu
 
 
 ## Example
+
+
+```js
+import MarkerClusterer from '@googlemaps/markerclustererplus';
+
+const markerCluster = new MarkerClusterer(map, markers);
+```
 
 View the package in action [here](https://googlemaps.github.io/js-markerclustererplus/examples/index.html).
