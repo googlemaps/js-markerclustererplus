@@ -2,16 +2,12 @@
   "compilerOptions": {
     "declaration": true,
     "declarationDir": "./dist",
-    "module": "es6",
     "noImplicitAny": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
     "outDir": "./dist",
-    "target": "es6",
-    "sourceMap": true
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "lib": ["DOM", "ESNext"],
+    "types": ["googlemaps"]
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/**/*.test.*"],
-  "esModuleInterop": true
+  "include": ["src/**/*"]
 }
