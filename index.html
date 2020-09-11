@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@google/markerclustererplus</title>
-	<meta name="description" content="Documentation for @google/markerclustererplus">
+	<title>@googlemaps/markerclustererplus</title>
+	<meta name="description" content="Documentation for @googlemaps/markerclustererplus">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 </head>
@@ -22,7 +22,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">@google/markerclustererplus</a>
+					<a href="index.html" class="title">@googlemaps/markerclustererplus</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -52,7 +52,7 @@
 					<a href="globals.html">Globals</a>
 				</li>
 			</ul>
-			<h1>@google/markerclustererplus</h1>
+			<h1>@googlemaps/markerclustererplus</h1>
 		</div>
 	</div>
 </header>
@@ -63,7 +63,7 @@
 				<a href="#google-maps-javascript-markerclustererplus" id="google-maps-javascript-markerclustererplus" style="color: inherit; text-decoration: none;">
 					<h1>Google Maps JavaScript MarkerClustererPlus</h1>
 				</a>
-				<p><a href="https://www.npmjs.com/package/@google/markerclustererplus"><img src="https://img.shields.io/npm/v/@google/markerclustererplus" alt="npm"></a>
+				<p><a href="https://www.npmjs.com/package/@googlemaps/markerclustererplus"><img src="https://img.shields.io/npm/v/@googlemaps/markerclustererplus" alt="npm"></a>
 					<img src="https://github.com/googlemaps/js-markerclustererplus/workflows/Build/badge.svg" alt="Build">
 					<img src="https://github.com/googlemaps/js-markerclustererplus/workflows/Release/badge.svg" alt="Release">
 					<a href="https://codecov.io/gh/googlemaps/js-markerclustererplus"><img src="https://codecov.io/gh/googlemaps/js-markerclustererplus/branch/main/graph/badge.svg" alt="codecov"></a>
@@ -74,17 +74,20 @@
 					<h2>Description</h2>
 				</a>
 				<p>The library creates and manages per-zoom-level clusters for large amounts of markers.</p>
+				<blockquote>
+					<p><strong>Note</strong>: This library is the same as the existing library <code>@google/markerclustererplus</code>, but renamed and in its own repository. All future development will continue here.</p>
+				</blockquote>
 				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
 					<h2>Install</h2>
 				</a>
-				<p>Available via npm as the package <a href="https://www.npmjs.com/package/@google/markerclustererplus">@google/markerclustererplus</a>.</p>
-				<p><code>npm i @google/markerclustererplus</code></p>
+				<p>Available via npm as the package <a href="https://www.npmjs.com/package/@googlemaps/markerclustererplus">@googlemaps/markerclustererplus</a>.</p>
+				<p><code>npm i @googlemaps/markerclustererplus</code></p>
 				<p>or</p>
-				<p><code>yarn add @google/markerclustererplus</code></p>
+				<p><code>yarn add @googlemaps/markerclustererplus</code></p>
 				<p>Alternativly you may add the umd package directly to the html document using the unpkg link.</p>
-				<p><code>&lt;script src=&quot;https://unpkg.com/@google/markerclustererplus/dist/markerclustererplus.min.js&quot;&gt;&lt;/script&gt;</code></p>
+				<p><code>&lt;script src=&quot;https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js&quot;&gt;&lt;/script&gt;</code></p>
 				<p>When adding via unpkg, the loader can be accessed at <code>MarkerClusterer</code>.</p>
-				<p>A version can be specified by using <code>https://unpkg.com/@google/markerclustererplus@VERSION/dist/...</code>.</p>
+				<p>A version can be specified by using <code>https://unpkg.com/@googlemaps/markerclustererplus@VERSION/dist/...</code>.</p>
 				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
 					<h2>Documentation</h2>
 				</a>
@@ -92,6 +95,9 @@
 				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
 					<h2>Example</h2>
 				</a>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> MarkerClusterer <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@googlemaps/markerclustererplus&#x27;</span>;
+
+<span class="hljs-keyword">const</span> markerCluster = <span class="hljs-keyword">new</span> MarkerClusterer(map, markers);</code></pre>
 				<p>View the package in action <a href="https://googlemaps.github.io/js-markerclustererplus/examples/index.html">here</a>.</p>
 			</div>
 		</div>
