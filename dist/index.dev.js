@@ -14,7 +14,9 @@ var MarkerClusterer = (function () {
 
 	var global_1 = // eslint-disable-next-line no-undef
 	check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || check(typeof self == 'object' && self) || check(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func
-	Function('return this')();
+	function () {
+	  return this;
+	}() || Function('return this')();
 
 	var fails = function (exec) {
 	  try {
@@ -206,7 +208,7 @@ var MarkerClusterer = (function () {
 	  (module.exports = function (key, value) {
 	    return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
 	  })('versions', []).push({
-	    version: '3.6.5',
+	    version: '3.7.0',
 	    mode:  'global',
 	    copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
 	  });
@@ -247,12 +249,13 @@ var MarkerClusterer = (function () {
 	};
 
 	if (nativeWeakMap) {
-	  var store$1 = new WeakMap$1();
+	  var store$1 = sharedStore.state || (sharedStore.state = new WeakMap$1());
 	  var wmget = store$1.get;
 	  var wmhas = store$1.has;
 	  var wmset = store$1.set;
 
 	  set = function (it, metadata) {
+	    metadata.facade = it;
 	    wmset.call(store$1, it, metadata);
 	    return metadata;
 	  };
@@ -269,6 +272,7 @@ var MarkerClusterer = (function () {
 	  hiddenKeys[STATE] = true;
 
 	  set = function (it, metadata) {
+	    metadata.facade = it;
 	    createNonEnumerableProperty(it, STATE, metadata);
 	    return metadata;
 	  };
@@ -298,10 +302,18 @@ var MarkerClusterer = (function () {
 	    var unsafe = options ? !!options.unsafe : false;
 	    var simple = options ? !!options.enumerable : false;
 	    var noTargetGet = options ? !!options.noTargetGet : false;
+	    var state;
 
 	    if (typeof value == 'function') {
-	      if (typeof key == 'string' && !has(value, 'name')) createNonEnumerableProperty(value, 'name', key);
-	      enforceInternalState(value).source = TEMPLATE.join(typeof key == 'string' ? key : '');
+	      if (typeof key == 'string' && !has(value, 'name')) {
+	        createNonEnumerableProperty(value, 'name', key);
+	      }
+
+	      state = enforceInternalState(value);
+
+	      if (!state.source) {
+	        state.source = TEMPLATE.join(typeof key == 'string' ? key : '');
+	      }
 	    }
 
 	    if (O === global_1) {
@@ -974,17 +986,22 @@ var MarkerClusterer = (function () {
 	  right: createMethod$1(true)
 	};
 
+	var engineIsNode = classofRaw(global_1.process) == 'process';
+
 	var $reduce = arrayReduce.left;
 	var STRICT_METHOD$2 = arrayMethodIsStrict('reduce');
 	var USES_TO_LENGTH$3 = arrayMethodUsesToLength('reduce', {
 	  1: 0
-	}); // `Array.prototype.reduce` method
+	}); // Chrome 80-82 has a critical bug
+	// https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
+
+	var CHROME_BUG = !engineIsNode && engineV8Version > 79 && engineV8Version < 83; // `Array.prototype.reduce` method
 	// https://tc39.github.io/ecma262/#sec-array.prototype.reduce
 
 	_export({
 	  target: 'Array',
 	  proto: true,
-	  forced: !STRICT_METHOD$2 || !USES_TO_LENGTH$3
+	  forced: !STRICT_METHOD$2 || !USES_TO_LENGTH$3 || CHROME_BUG
 	}, {
 	  reduce: function reduce(callbackfn
 	  /* , initialValue */
