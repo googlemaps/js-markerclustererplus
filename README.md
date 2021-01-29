@@ -26,7 +26,7 @@ or
 
 Alternativly you may add the umd package directly to the html document using the unpkg link.
 
-`<script src="https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js"></script>`
+`<script src="https://unpkg.com/@@googlemaps/markerclustererplus/dist/index.min.js"></script>`
 
 When adding via unpkg, the loader can be accessed at `MarkerClusterer`.
 
