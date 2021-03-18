@@ -1,0 +1,116 @@
+<!DOCTYPE >
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>MarkerClustererPlus V3 Example</title>
+
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 10px 20px 20px;
+        font-family: Arial;
+        font-size: 16px;
+      }
+
+      #map-container {
+        padding: 6px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #ccc #ccc #999 #ccc;
+        -webkit-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
+        -moz-box-shadow: rgba(64, 64, 64, 0.5) 0 2px 5px;
+        box-shadow: rgba(64, 64, 64, 0.1) 0 2px 5px;
+        width: 600px;
+      }
+
+      #map {
+        width: 600px;
+        height: 400px;
+      }
+    </style>
+
+    <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=false"></script>
+    <script type="text/javascript" src="data.js"></script>
+    <script
+      type="text/javascript"
+      src="../dist/index.min.js"
+    ></script>
+
+    <script type="text/javascript">
+      const styleCluster = [
+        MarkerClusterer.withDefaultStyle({
+          width: 25,
+          height: 32,
+          anchorIcon: [16, 12.5],
+          textColor: "red",
+          textSize: 10,
+        }),
+        MarkerClusterer.withDefaultStyle({
+          width: 50,
+          height: 64,
+          anchorIcon: [32, 25],
+          textColor: "yellow",
+          textSize: 10,
+        }),
+        MarkerClusterer.withDefaultStyle({
+          width: 100,
+          height: 128,
+          anchorIcon: [64, 50],
+          textColor: "green",
+          textSize: 10,
+        }),
+      ];
+
+      function initialize() {
+        var center = new google.maps.LatLng(37.4419, -122.1419);
+
+        var map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 3,
+          center: center,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+        });
+
+        var markers = [];
+        for (var i = 0; i < 100; i++) {
+          var dataPhoto = data.photos[i];
+          var latLng = new google.maps.LatLng(
+            dataPhoto.latitude,
+            dataPhoto.longitude
+          );
+          var marker = new google.maps.Marker({
+            position: latLng,
+          });
+          markers.push(marker);
+        }
+        var markerCluster = new MarkerClusterer(map, markers, {
+          styles: styleCluster,
+          calculator: (clusterMarkers, numStyles) => {
+            let index = 0;
+            const count = clusterMarkers.length;
+
+            let dv = count;
+            while (dv !== 0) {
+              dv = Math.floor(dv / 10);
+              index++;
+            }
+
+            const iconUrl = `https://chart.googleapis.com/chart?chs=150x150&chd=t:${count},${markers.length}&cht=p3&chf=bg,s,FFFFFF00`
+
+            index = Math.min(index, numStyles);
+            return {
+              text: count.toString(),
+              url: iconUrl,
+              index: index,
+              title: "",
+            };
+          }
+        });
+      }
+      google.maps.event.addDomListener(window, "load", initialize);
+    </script>
+  </head>
+  <body>
+    <h3>Dynamic icon example for MarkerClustererPlus</h3>
+    <div id="map-container"><div id="map"></div></div>
+  </body>
+</html>

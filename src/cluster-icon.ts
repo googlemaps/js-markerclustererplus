@@ -141,6 +141,10 @@ export interface ClusterIconInfo {
    * value of the `title` property passed to the MarkerClusterer.
    */
   title: string;
+  /**
+   * An override for dynamic cluster icon url (if not provided, the component will use the default style icon)
+   */
+  url?: string;
 }
 
 /**
@@ -381,11 +385,16 @@ export class ClusterIcon extends OverlayViewSafe {
       };
     }
 
+    const overrideDimensionsDynamicIcon = this.sums_.url
+      ? { width: "100%", height: "100%" }
+      : {};
+
     const cssText = toCssText({
       position: "absolute",
       top: coercePixels(spriteV),
       left: coercePixels(spriteH),
       ...dimensions,
+      ...overrideDimensionsDynamicIcon,
     });
 
     return `<img alt="${this.sums_.text}" aria-hidden="true" src="${this.style.url}" style="${cssText}"/>`;
@@ -401,7 +410,9 @@ export class ClusterIcon extends OverlayViewSafe {
     this.sums_ = sums;
     let index = Math.max(0, sums.index - 1);
     index = Math.min(this.styles_.length - 1, index);
-    this.style = this.styles_[index];
+    this.style = this.sums_.url
+      ? { ...this.styles_[index], url: this.sums_.url }
+      : this.styles_[index];
 
     this.anchorText_ = this.style.anchorText || [0, 0];
     this.anchorIcon_ = this.style.anchorIcon || [
