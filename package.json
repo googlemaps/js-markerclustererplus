@@ -27,7 +27,7 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "docs": "typedoc",
+    "docs": "typedoc src/index.ts",
     "format": "prettier *.json *.js e2e/* examples/* --write && eslint src/* --fix",
     "lint": "eslint src/*",
     "prepare": "rollup -c",
