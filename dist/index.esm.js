@@ -22,6 +22,8 @@ var extendStatics = function(d, b) {
 };
 
 function __extends(d, b) {
+    if (typeof b !== "function" && b !== null)
+        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
     extendStatics(d, b);
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -317,7 +319,10 @@ var ClusterIcon = /** @class */ (function (_super) {
                 clip: "rect(" + Y1 + "px, " + X1 + "px, " + Y2 + "px, " + X2 + "px)",
             };
         }
-        var cssText = toCssText(__assign({ position: "absolute", top: coercePixels(spriteV), left: coercePixels(spriteH) }, dimensions));
+        var overrideDimensionsDynamicIcon = this.sums_.url
+            ? { width: "100%", height: "100%" }
+            : {};
+        var cssText = toCssText(__assign(__assign({ position: "absolute", top: coercePixels(spriteV), left: coercePixels(spriteH) }, dimensions), overrideDimensionsDynamicIcon));
         return "<img alt=\"" + this.sums_.text + "\" aria-hidden=\"true\" src=\"" + this.style.url + "\" style=\"" + cssText + "\"/>";
     };
     /**
@@ -330,7 +335,8 @@ var ClusterIcon = /** @class */ (function (_super) {
         this.sums_ = sums;
         var index = Math.max(0, sums.index - 1);
         index = Math.min(this.styles_.length - 1, index);
-        this.style = this.styles_[index];
+        this.style = this.sums_.url
+            ? __assign(__assign({}, this.styles_[index]), { url: this.sums_.url }) : this.styles_[index];
         this.anchorText_ = this.style.anchorText || [0, 0];
         this.anchorIcon_ = this.style.anchorIcon || [
             Math.floor(this.style.height / 2),

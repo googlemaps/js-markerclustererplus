@@ -3,10 +3,11 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@googlemaps/markerclustererplus</title>
-	<meta name="description" content="Documentation for @googlemaps/markerclustererplus">
+	<title>@googlemaps/js-markerclustererplus</title>
+	<meta name="description" content="Documentation for @googlemaps/js-markerclustererplus">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -22,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">@googlemaps/markerclustererplus</a>
+					<a href="index.html" class="title">@googlemaps/js-markerclustererplus</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -47,12 +48,7 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<ul class="tsd-breadcrumb">
-				<li>
-					<a href="globals.html">Globals</a>
-				</li>
-			</ul>
-			<h1>@googlemaps/markerclustererplus</h1>
+			<h1>@googlemaps/js-markerclustererplus</h1>
 		</div>
 	</div>
 </header>
@@ -95,9 +91,10 @@
 				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
 					<h2>Example</h2>
 				</a>
-				<pre><code class="language-js"><span class="hljs-keyword">import</span> MarkerClusterer <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@googlemaps/markerclustererplus&#x27;</span>;
+				<pre><code class="language-js"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">MarkerClusterer</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@googlemaps/markerclustererplus&#039;</span><span style="color: #000000">;</span>
 
-<span class="hljs-keyword">const</span> markerCluster = <span class="hljs-keyword">new</span> MarkerClusterer(map, markers);</code></pre>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">markerCluster</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">MarkerClusterer</span><span style="color: #000000">(</span><span style="color: #001080">map</span><span style="color: #000000">, </span><span style="color: #001080">markers</span><span style="color: #000000">);</span>
+</code></pre>
 				<p>View the package in action:</p>
 				<ul>
 					<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/simple_example.html">Simple Example</a></li>
@@ -110,24 +107,15 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class">
-						<a href="classes/cluster.html" class="tsd-kind-icon">Cluster</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/clustericon.html" class="tsd-kind-icon">Cluster<wbr>Icon</a>
-					</li>
-					<li class=" tsd-kind-class">
-						<a href="classes/markerclusterer.html" class="tsd-kind-icon">Marker<wbr>Clusterer</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/clusteraugmentedmarker.html" class="tsd-kind-icon">Cluster<wbr>Augmented<wbr>Marker</a>
+						<a href="classes/default.html" class="tsd-kind-icon">default</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/clustericoninfo.html" class="tsd-kind-icon">Cluster<wbr>Icon<wbr>Info</a>
@@ -137,18 +125,6 @@
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/markerclustereroptions.html" class="tsd-kind-icon">Marker<wbr>Clusterer<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#arialabelfn" class="tsd-kind-icon">Aria<wbr>Label<wbr>Fn</a>
-					</li>
-					<li class=" tsd-kind-type-alias">
-						<a href="globals.html#calculator" class="tsd-kind-icon">Calculator</a>
-					</li>
-					<li class=" tsd-kind-event">
-						<a href="globals.html#clusteringbegin" class="tsd-kind-icon">clusteringbegin</a>
-					</li>
-					<li class=" tsd-kind-event">
-						<a href="globals.html#clusteringend" class="tsd-kind-icon">clusteringend</a>
 					</li>
 				</ul>
 			</nav>
@@ -170,9 +146,6 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
 			</ul>
 		</div>
 	</div>

@@ -115,6 +115,10 @@ export interface ClusterIconInfo {
      * value of the `title` property passed to the MarkerClusterer.
      */
     title: string;
+    /**
+     * An override for dynamic cluster icon url (if not provided, the component will use the default style icon)
+     */
+    url?: string;
 }
 /**
  * A cluster icon.
