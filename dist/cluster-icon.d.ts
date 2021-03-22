@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/// <reference types="googlemaps" />
+/// <reference types="google.maps" />
 /**
  * This class represents the object for values in the `styles` array passed
  * to the {@link MarkerClusterer} constructor. The element in this array that is used to

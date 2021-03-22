@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/// <reference types="googlemaps" />
+/// <reference types="google.maps" />
 import { MarkerClusterer } from "./markerclusterer";
 /**
  * Creates a single cluster that manages a group of proximate markers.
