@@ -130,10 +130,23 @@ var MarkerClusterer = (function () {
     return object;
   };
 
+  // `RequireObjectCoercible` abstract operation
+  // https://tc39.es/ecma262/#sec-requireobjectcoercible
+  var requireObjectCoercible = function (it) {
+    if (it == undefined) throw TypeError("Can't call method on " + it);
+    return it;
+  };
+
+  // https://tc39.es/ecma262/#sec-toobject
+
+  var toObject = function (argument) {
+    return Object(requireObjectCoercible(argument));
+  };
+
   var hasOwnProperty = {}.hasOwnProperty;
 
-  var has$1 = function (it, key) {
-    return hasOwnProperty.call(it, key);
+  var has$1 = function hasOwn(it, key) {
+    return hasOwnProperty.call(toObject(it), key);
   };
 
   var setGlobal = function (key, value) {
@@ -167,7 +180,7 @@ var MarkerClusterer = (function () {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.10.1',
+      version: '3.11.0',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -188,6 +201,7 @@ var MarkerClusterer = (function () {
 
   var hiddenKeys$1 = {};
 
+  var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
   var WeakMap = global_1.WeakMap;
   var set, get, has;
 
@@ -214,6 +228,7 @@ var MarkerClusterer = (function () {
     var wmset = store.set;
 
     set = function (it, metadata) {
+      if (wmhas.call(store, it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       wmset.call(store, it, metadata);
       return metadata;
@@ -231,6 +246,7 @@ var MarkerClusterer = (function () {
     hiddenKeys$1[STATE] = true;
 
     set = function (it, metadata) {
+      if (has$1(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       createNonEnumerableProperty(it, STATE, metadata);
       return metadata;
@@ -349,13 +365,6 @@ var MarkerClusterer = (function () {
   }) ? function (it) {
     return classofRaw(it) == 'String' ? split.call(it, '') : Object(it);
   } : Object;
-
-  // `RequireObjectCoercible` abstract operation
-  // https://tc39.es/ecma262/#sec-requireobjectcoercible
-  var requireObjectCoercible = function (it) {
-    if (it == undefined) throw TypeError("Can't call method on " + it);
-    return it;
-  };
 
   var toIndexedObject = function (it) {
     return indexedObject(requireObjectCoercible(it));
@@ -787,12 +796,6 @@ var MarkerClusterer = (function () {
     }
   };
 
-  // https://tc39.es/ecma262/#sec-toobject
-
-  var toObject = function (argument) {
-    return Object(requireObjectCoercible(argument));
-  };
-
   // https://tc39.es/ecma262/#sec-isarray
   // eslint-disable-next-line es/no-array-isarray -- safe
 
@@ -1209,7 +1212,7 @@ var MarkerClusterer = (function () {
   }();
 
   var UNSUPPORTED_Y$1 = regexpStickyHelpers.UNSUPPORTED_Y || regexpStickyHelpers.BROKEN_CARET; // nonparticipating capturing group, copied from es5-shim's String#split patch.
-  // eslint-disable-next-line regexp/no-assertion-capturing-group, regexp/no-empty-group -- required for testing
+  // eslint-disable-next-line regexp/no-assertion-capturing-group, regexp/no-empty-group, regexp/no-lazy-ends -- testing
 
   var NPCG_INCLUDED = /()??/.exec('')[1] !== undefined;
   var PATCH = UPDATES_LAST_INDEX_WRONG || NPCG_INCLUDED || UNSUPPORTED_Y$1;
