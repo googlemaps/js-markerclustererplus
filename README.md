@@ -32,6 +32,15 @@ When adding via unpkg, the loader can be accessed at `MarkerClusterer`.
 
 A version can be specified by using `https://unpkg.com/@googlemaps/markerclustererplus@VERSION/dist/...`.
 
+#### TypeScript
+
+This library uses the official TypeScript typings for Google Maps Platform, [@types/google.maps](https://www.npmjs.com/package/@types/google.maps).
+
+`npm i -D @types/google.maps`
+
+It may also require the [skipLibCheck](https://www.typescriptlang.org/tsconfig#skipLibCheck) TypeScript compiler option.
+
+
 ## Documentation
 
 The reference documentation can be found at this [link](https://googlemaps.github.io/js-markerclustererplus/index.html).
