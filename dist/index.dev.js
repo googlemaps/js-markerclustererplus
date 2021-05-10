@@ -180,7 +180,7 @@ var MarkerClusterer = (function () {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.11.1',
+      version: '3.12.1',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -221,7 +221,7 @@ var MarkerClusterer = (function () {
     };
   };
 
-  if (nativeWeakMap) {
+  if (nativeWeakMap || sharedStore.state) {
     var store = sharedStore.state || (sharedStore.state = new WeakMap());
     var wmget = store.get;
     var wmhas = store.has;
@@ -803,8 +803,6 @@ var MarkerClusterer = (function () {
     return classofRaw(arg) == 'Array';
   };
 
-  var engineIsNode = classofRaw(global_1.process) == 'process';
-
   var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
 
   var process = global_1.process;
@@ -814,7 +812,7 @@ var MarkerClusterer = (function () {
 
   if (v8) {
     match = v8.split('.');
-    version = match[0] + match[1];
+    version = match[0] < 4 ? 1 : match[0] + match[1];
   } else if (engineUserAgent) {
     match = engineUserAgent.match(/Edge\/(\d+)/);
 
@@ -826,11 +824,13 @@ var MarkerClusterer = (function () {
 
   var engineV8Version = version && +version;
 
+  /* eslint-disable es/no-symbol -- required for testing */
+  // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+
   var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
-    // eslint-disable-next-line es/no-symbol -- required for testing
-    return !Symbol.sham && ( // Chrome 38 Symbol has incorrect toString conversion
+    return !String(Symbol()) || // Chrome 38 Symbol has incorrect toString conversion
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
-    engineIsNode ? engineV8Version === 38 : engineV8Version > 37 && engineV8Version < 41);
+    !Symbol.sham && engineV8Version && engineV8Version < 41;
   });
 
   /* eslint-disable es/no-symbol -- required for testing */
@@ -1069,8 +1069,8 @@ var MarkerClusterer = (function () {
   };
 
   var TO_STRING = 'toString';
-  var RegExpPrototype = RegExp.prototype;
-  var nativeToString = RegExpPrototype[TO_STRING];
+  var RegExpPrototype$1 = RegExp.prototype;
+  var nativeToString = RegExpPrototype$1[TO_STRING];
   var NOT_GENERIC = fails(function () {
     return nativeToString.call({
       source: 'a',
@@ -1086,7 +1086,7 @@ var MarkerClusterer = (function () {
       var R = anObject(this);
       var p = String(R.source);
       var rf = R.flags;
-      var f = String(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype) ? regexpFlags.call(R) : rf);
+      var f = String(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype$1) ? regexpFlags.call(R) : rf);
       return '/' + p + '/' + f;
     }, {
       unsafe: true
@@ -1199,6 +1199,11 @@ var MarkerClusterer = (function () {
     BROKEN_CARET: BROKEN_CARET
   };
 
+  /* eslint-disable regexp/no-assertion-capturing-group, regexp/no-empty-group, regexp/no-lazy-ends -- testing */
+
+  /* eslint-disable regexp/no-useless-quantifier -- testing */
+
+
   var nativeExec = RegExp.prototype.exec;
   var nativeReplace = shared('native-string-replace', String.prototype.replace);
   var patchedExec = nativeExec;
@@ -1212,7 +1217,6 @@ var MarkerClusterer = (function () {
   }();
 
   var UNSUPPORTED_Y$1 = regexpStickyHelpers.UNSUPPORTED_Y || regexpStickyHelpers.BROKEN_CARET; // nonparticipating capturing group, copied from es5-shim's String#split patch.
-  // eslint-disable-next-line regexp/no-assertion-capturing-group, regexp/no-empty-group, regexp/no-lazy-ends -- testing
 
   var NPCG_INCLUDED = /()??/.exec('')[1] !== undefined;
   var PATCH = UPDATES_LAST_INDEX_WRONG || NPCG_INCLUDED || UNSUPPORTED_Y$1;
@@ -1293,6 +1297,7 @@ var MarkerClusterer = (function () {
   });
 
   var SPECIES$1 = wellKnownSymbol('species');
+  var RegExpPrototype = RegExp.prototype;
   var REPLACE_SUPPORTS_NAMED_GROUPS = !fails(function () {
     // #replace needs built-in support for named groups.
     // #match works fine because it just return the exec results, even if it has
@@ -1387,7 +1392,9 @@ var MarkerClusterer = (function () {
     if (!DELEGATES_TO_SYMBOL || !DELEGATES_TO_EXEC || KEY === 'replace' && !(REPLACE_SUPPORTS_NAMED_GROUPS && REPLACE_KEEPS_$0 && !REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE) || KEY === 'split' && !SPLIT_WORKS_WITH_OVERWRITTEN_EXEC) {
       var nativeRegExpMethod = /./[SYMBOL];
       var methods = exec(SYMBOL, ''[KEY], function (nativeMethod, regexp, str, arg2, forceStringMethod) {
-        if (regexp.exec === RegExp.prototype.exec) {
+        var $exec = regexp.exec;
+
+        if ($exec === regexpExec || $exec === RegExpPrototype.exec) {
           if (DELEGATES_TO_SYMBOL && !forceStringMethod) {
             // The native String method already delegates to @@method (this
             // polyfilled function), leasing to infinite recursion.
@@ -1414,7 +1421,7 @@ var MarkerClusterer = (function () {
       var stringMethod = methods[0];
       var regexMethod = methods[1];
       redefine(String.prototype, KEY, stringMethod);
-      redefine(RegExp.prototype, SYMBOL, length == 2 // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
+      redefine(RegExpPrototype, SYMBOL, length == 2 // 21.2.5.8 RegExp.prototype[@@replace](string, replaceValue)
       // 21.2.5.11 RegExp.prototype[@@split](string, limit)
       ? function (string, arg) {
         return regexMethod.call(string, this, arg);
@@ -1425,7 +1432,7 @@ var MarkerClusterer = (function () {
       });
     }
 
-    if (sham) createNonEnumerableProperty(RegExp.prototype[SYMBOL], 'sham', true);
+    if (sham) createNonEnumerableProperty(RegExpPrototype[SYMBOL], 'sham', true);
   };
 
   var MATCH = wellKnownSymbol('match'); // `IsRegExp` abstract operation
