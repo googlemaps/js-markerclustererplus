@@ -209,6 +209,16 @@ export class ClusterIcon extends OverlayViewSafe {
       cDraggingMapByCluster = false;
     });
 
+    google.maps.event.addDomListener(this.div_, "contextmenu", () => {
+      /**
+       * This event is fired when a cluster marker contextmenu is requested.
+       * @name MarkerClusterer#mouseover
+       * @param {Cluster} c The cluster that the contextmenu is requested.
+       * @event
+       */
+      google.maps.event.trigger(mc, "contextmenu", this.cluster_);
+    });
+
     // March 1, 2018: Fix for this 3.32 exp bug, https://issuetracker.google.com/issues/73571522
     // But it doesn't work with earlier releases so do a version check.
     if (gmVersion >= 332) {
