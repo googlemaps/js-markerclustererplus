@@ -145,7 +145,7 @@ var MarkerClusterer = (function () {
 
   var hasOwnProperty = {}.hasOwnProperty;
 
-  var has$1 = function hasOwn(it, key) {
+  var has$1 = Object.hasOwn || function hasOwn(it, key) {
     return hasOwnProperty.call(toObject(it), key);
   };
 
@@ -163,7 +163,7 @@ var MarkerClusterer = (function () {
   var store$1 = global_1[SHARED] || setGlobal(SHARED, {});
   var sharedStore = store$1;
 
-  var functionToString = Function.toString; // this helper broken in `3.4.1-3.4.4`, so we can't use `shared` helper
+  var functionToString = Function.toString; // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 
   if (typeof sharedStore.inspectSource != 'function') {
     sharedStore.inspectSource = function (it) {
@@ -180,7 +180,7 @@ var MarkerClusterer = (function () {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.12.1',
+      version: '3.14.0',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -828,8 +828,10 @@ var MarkerClusterer = (function () {
   // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 
   var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
-    return !String(Symbol()) || // Chrome 38 Symbol has incorrect toString conversion
-    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+    var symbol = Symbol(); // Chrome 38 Symbol has incorrect toString conversion
+    // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
+
+    return !String(symbol) || !(Object(symbol) instanceof Symbol) || // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
     !Symbol.sham && engineV8Version && engineV8Version < 41;
   });
 
@@ -1623,7 +1625,8 @@ var MarkerClusterer = (function () {
   var floor = Math.floor;
   var replace = ''.replace;
   var SUBSTITUTION_SYMBOLS = /\$([$&'`]|\d{1,2}|<[^>]*>)/g;
-  var SUBSTITUTION_SYMBOLS_NO_NAMED = /\$([$&'`]|\d{1,2})/g; // https://tc39.es/ecma262/#sec-getsubstitution
+  var SUBSTITUTION_SYMBOLS_NO_NAMED = /\$([$&'`]|\d{1,2})/g; // `GetSubstitution` abstract operation
+  // https://tc39.es/ecma262/#sec-getsubstitution
 
   var getSubstitution = function (matched, str, position, captures, namedCaptures, replacement) {
     var tailPos = position + matched.length;
