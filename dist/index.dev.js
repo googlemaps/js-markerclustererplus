@@ -395,7 +395,7 @@ var MarkerClusterer = (function () {
     return integer < 0 ? max$3(integer + length, 0) : min$3(integer, length);
   };
 
-  var createMethod$2 = function (IS_INCLUDES) {
+  var createMethod$3 = function (IS_INCLUDES) {
     return function ($this, el, fromIndex) {
       var O = toIndexedObject($this);
       var length = toLength(O.length);
@@ -417,10 +417,10 @@ var MarkerClusterer = (function () {
   var arrayIncludes = {
     // `Array.prototype.includes` method
     // https://tc39.es/ecma262/#sec-array.prototype.includes
-    includes: createMethod$2(true),
+    includes: createMethod$3(true),
     // `Array.prototype.indexOf` method
     // https://tc39.es/ecma262/#sec-array.prototype.indexof
-    indexOf: createMethod$2(false)
+    indexOf: createMethod$3(false)
   };
 
   var indexOf = arrayIncludes.indexOf;
@@ -612,7 +612,7 @@ var MarkerClusterer = (function () {
   var ltrim = RegExp('^' + whitespace + whitespace + '*');
   var rtrim = RegExp(whitespace + whitespace + '*$'); // `String.prototype.{ trim, trimStart, trimEnd, trimLeft, trimRight }` methods implementation
 
-  var createMethod$1 = function (TYPE) {
+  var createMethod$2 = function (TYPE) {
     return function ($this) {
       var string = String(requireObjectCoercible($this));
       if (TYPE & 1) string = string.replace(ltrim, '');
@@ -624,19 +624,19 @@ var MarkerClusterer = (function () {
   var stringTrim = {
     // `String.prototype.{ trimLeft, trimStart }` methods
     // https://tc39.es/ecma262/#sec-string.prototype.trimstart
-    start: createMethod$1(1),
+    start: createMethod$2(1),
     // `String.prototype.{ trimRight, trimEnd }` methods
     // https://tc39.es/ecma262/#sec-string.prototype.trimend
-    end: createMethod$1(2),
+    end: createMethod$2(2),
     // `String.prototype.trim` method
     // https://tc39.es/ecma262/#sec-string.prototype.trim
-    trim: createMethod$1(3)
+    trim: createMethod$2(3)
   };
 
   var getOwnPropertyNames = objectGetOwnPropertyNames.f;
   var getOwnPropertyDescriptor$1 = objectGetOwnPropertyDescriptor.f;
   var defineProperty = objectDefineProperty.f;
-  var trim = stringTrim.trim;
+  var trim$1 = stringTrim.trim;
   var NUMBER = 'Number';
   var NativeNumber = global_1[NUMBER];
   var NumberPrototype = NativeNumber.prototype; // Opera ~12 has broken Object#toString
@@ -649,7 +649,7 @@ var MarkerClusterer = (function () {
     var first, third, radix, maxCode, digits, length, index, code;
 
     if (typeof it == 'string' && it.length > 2) {
-      it = trim(it);
+      it = trim$1(it);
       first = it.charCodeAt(0);
 
       if (first === 43 || first === 45) {
@@ -795,6 +795,38 @@ var MarkerClusterer = (function () {
       redefine(target, key, sourceProperty, options);
     }
   };
+
+  var arrayMethodIsStrict = function (METHOD_NAME, argument) {
+    var method = [][METHOD_NAME];
+    return !!method && fails(function () {
+      // eslint-disable-next-line no-useless-call,no-throw-literal -- required for testing
+      method.call(null, argument || function () {
+        throw 1;
+      }, 1);
+    });
+  };
+
+  /* eslint-disable es/no-array-prototype-indexof -- required for testing */
+
+
+  var $indexOf = arrayIncludes.indexOf;
+  var nativeIndexOf = [].indexOf;
+  var NEGATIVE_ZERO = !!nativeIndexOf && 1 / [1].indexOf(1, -0) < 0;
+  var STRICT_METHOD$2 = arrayMethodIsStrict('indexOf'); // `Array.prototype.indexOf` method
+  // https://tc39.es/ecma262/#sec-array.prototype.indexof
+
+  _export({
+    target: 'Array',
+    proto: true,
+    forced: NEGATIVE_ZERO || !STRICT_METHOD$2
+  }, {
+    indexOf: function indexOf(searchElement
+    /* , fromIndex = 0 */
+    ) {
+      return NEGATIVE_ZERO // convert -0 to +0
+      ? nativeIndexOf.apply(this, arguments) || 0 : $indexOf(this, searchElement, arguments.length > 1 ? arguments[1] : undefined);
+    }
+  });
 
   // https://tc39.es/ecma262/#sec-isarray
   // eslint-disable-next-line es/no-array-isarray -- safe
@@ -1137,28 +1169,86 @@ var MarkerClusterer = (function () {
       return __assign.apply(this, arguments);
   };
 
-  var arrayMethodIsStrict = function (METHOD_NAME, argument) {
-    var method = [][METHOD_NAME];
-    return !!method && fails(function () {
-      // eslint-disable-next-line no-useless-call,no-throw-literal -- required for testing
-      method.call(null, argument || function () {
-        throw 1;
-      }, 1);
-    });
-  };
-
   var nativeJoin = [].join;
   var ES3_STRINGS = indexedObject != Object;
-  var STRICT_METHOD = arrayMethodIsStrict('join', ','); // `Array.prototype.join` method
+  var STRICT_METHOD$1 = arrayMethodIsStrict('join', ','); // `Array.prototype.join` method
   // https://tc39.es/ecma262/#sec-array.prototype.join
 
   _export({
     target: 'Array',
     proto: true,
-    forced: ES3_STRINGS || !STRICT_METHOD
+    forced: ES3_STRINGS || !STRICT_METHOD$1
   }, {
     join: function join(separator) {
       return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
+    }
+  });
+
+  var aFunction = function (it) {
+    if (typeof it != 'function') {
+      throw TypeError(String(it) + ' is not a function');
+    }
+
+    return it;
+  };
+
+  var createMethod$1 = function (IS_RIGHT) {
+    return function (that, callbackfn, argumentsLength, memo) {
+      aFunction(callbackfn);
+      var O = toObject(that);
+      var self = indexedObject(O);
+      var length = toLength(O.length);
+      var index = IS_RIGHT ? length - 1 : 0;
+      var i = IS_RIGHT ? -1 : 1;
+      if (argumentsLength < 2) while (true) {
+        if (index in self) {
+          memo = self[index];
+          index += i;
+          break;
+        }
+
+        index += i;
+
+        if (IS_RIGHT ? index < 0 : length <= index) {
+          throw TypeError('Reduce of empty array with no initial value');
+        }
+      }
+
+      for (; IS_RIGHT ? index >= 0 : length > index; index += i) if (index in self) {
+        memo = callbackfn(memo, self[index], index, O);
+      }
+
+      return memo;
+    };
+  };
+
+  var arrayReduce = {
+    // `Array.prototype.reduce` method
+    // https://tc39.es/ecma262/#sec-array.prototype.reduce
+    left: createMethod$1(false),
+    // `Array.prototype.reduceRight` method
+    // https://tc39.es/ecma262/#sec-array.prototype.reduceright
+    right: createMethod$1(true)
+  };
+
+  var engineIsNode = classofRaw(global_1.process) == 'process';
+
+  var $reduce = arrayReduce.left;
+  var STRICT_METHOD = arrayMethodIsStrict('reduce'); // Chrome 80-82 has a critical bug
+  // https://bugs.chromium.org/p/chromium/issues/detail?id=1049982
+
+  var CHROME_BUG = !engineIsNode && engineV8Version > 79 && engineV8Version < 83; // `Array.prototype.reduce` method
+  // https://tc39.es/ecma262/#sec-array.prototype.reduce
+
+  _export({
+    target: 'Array',
+    proto: true,
+    forced: !STRICT_METHOD || CHROME_BUG
+  }, {
+    reduce: function reduce(callbackfn
+    /* , initialValue */
+    ) {
+      return $reduce(this, callbackfn, arguments.length, arguments.length > 1 ? arguments[1] : undefined);
     }
   });
 
@@ -1445,14 +1535,6 @@ var MarkerClusterer = (function () {
     return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
   };
 
-  var aFunction = function (it) {
-    if (typeof it != 'function') {
-      throw TypeError(String(it) + ' is not a function');
-    }
-
-    return it;
-  };
-
   var SPECIES = wellKnownSymbol('species'); // `SpeciesConstructor` abstract operation
   // https://tc39.es/ecma262/#sec-speciesconstructor
 
@@ -1621,6 +1703,26 @@ var MarkerClusterer = (function () {
       return A;
     }];
   }, UNSUPPORTED_Y);
+
+  var trim = stringTrim.trim;
+  var $parseInt = global_1.parseInt;
+  var hex = /^[+-]?0[Xx]/;
+  var FORCED = $parseInt(whitespaces + '08') !== 8 || $parseInt(whitespaces + '0x16') !== 22; // `parseInt` method
+  // https://tc39.es/ecma262/#sec-parseint-string-radix
+
+  var numberParseInt = FORCED ? function parseInt(string, radix) {
+    var S = trim(String(string));
+    return $parseInt(S, radix >>> 0 || (hex.test(S) ? 16 : 10));
+  } : $parseInt;
+
+  // https://tc39.es/ecma262/#sec-parseint-string-radix
+
+  _export({
+    global: true,
+    forced: parseInt != numberParseInt
+  }, {
+    parseInt: numberParseInt
+  });
 
   var floor = Math.floor;
   var replace = ''.replace;
@@ -2160,21 +2262,6 @@ var MarkerClusterer = (function () {
     return ClusterIcon;
   }(OverlayViewSafe);
 
-  /**
-   * Copyright 2019 Google LLC. All Rights Reserved.
-   *
-   * Licensed under the Apache License, Version 2.0 (the "License");
-   * you may not use this file except in compliance with the License.
-   * You may obtain a copy of the License at
-   *
-   *      http://www.apache.org/licenses/LICENSE-2.0
-   *
-   * Unless required by applicable law or agreed to in writing, software
-   * distributed under the License is distributed on an "AS IS" BASIS,
-   * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   * See the License for the specific language governing permissions and
-   * limitations under the License.
-   */
   /**
    * Creates a single cluster that manages a group of proximate markers.
    *  Used internally, do not call this constructor directly.
