@@ -19,7 +19,7 @@
  * to the {@link MarkerClusterer} constructor. The element in this array that is used to
  * style the cluster icon is determined by calling the `calculator` function.
  */
-import { Cluster } from "./cluster";
+import { Cluster } from "./cluster.bak";
 import { OverlayViewSafe } from "./overlay-view-safe";
 
 /**

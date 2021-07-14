@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import { MarkerClusterer } from "./markerclusterer";
-
-export { ClusterIconInfo, ClusterIconStyle } from "./cluster-icon";
-export { MarkerClustererOptions } from "./markerclusterer";
-
-export default MarkerClusterer;
+export { MarkerClusterer } from "./markerclusterer";
+export * from "./algorithm";
+export * from "./cluster";

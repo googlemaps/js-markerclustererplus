@@ -33,7 +33,7 @@
     <script type="text/javascript" src="data.js"></script>
     <script
       type="text/javascript"
-      src="../dist/index.min.js"
+      src="../dist/index.dev.js"
     ></script>
 
     <script type="text/javascript">
@@ -58,7 +58,7 @@
           });
           markers.push(marker);
         }
-        var markerCluster = new MarkerClusterer(map, markers);
+        var markerCluster = new markerClusterer.MarkerClusterer({map, markers});
       }
       google.maps.event.addDomListener(window, "load", initialize);
     </script>

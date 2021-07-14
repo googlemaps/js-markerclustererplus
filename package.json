@@ -37,6 +37,7 @@
   "devDependencies": {
     "@babel/preset-env": "^7.11.5",
     "@babel/runtime-corejs3": "^7.11.2",
+    "@rollup/plugin-node-resolve": "^13.0.0",
     "@types/google.maps": "^3.44.2",
     "@types/jest": "^26.0.13",
     "@types/selenium-webdriver": "^4.0.9",
@@ -64,5 +65,10 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://wombat-dressing-room.appspot.com"
+  },
+  "dependencies": {
+    "@turf/buffer": "^6.5.0",
+    "@turf/clusters-dbscan": "^6.4.0",
+    "@turf/clusters-kmeans": "^6.4.0"
   }
 }

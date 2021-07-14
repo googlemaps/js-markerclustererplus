@@ -18,6 +18,7 @@ import babel from "rollup-plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
 import { terser } from "rollup-plugin-terser";
 import typescript from "rollup-plugin-typescript2";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 
 const babelOptions = {
   extensions: [".js", ".ts"],
@@ -31,6 +32,7 @@ export default [
     plugins: [
       typescript(),
       commonjs(),
+      nodeResolve(),
       babel(babelOptions),
       terser(terserOptions),
     ],
@@ -39,25 +41,23 @@ export default [
         file: "dist/index.umd.js",
         format: "umd",
         sourcemap: true,
-        exports: "default",
-        name: "MarkerClusterer",
+        name: "markerClusterer",
       },
       {
         file: "dist/index.min.js",
         format: "iife",
         sourcemap: true,
-        exports: "default",
-        name: "MarkerClusterer",
+        name: "markerClusterer",
       },
     ],
   },
   {
     input: "src/index.ts",
-    plugins: [typescript(), commonjs(), babel(babelOptions)],
+    plugins: [typescript(), commonjs(), nodeResolve(), babel(babelOptions)],
     output: {
       file: "dist/index.dev.js",
       format: "iife",
-      name: "MarkerClusterer",
+      name: "markerClusterer",
     },
   },
   {
@@ -67,7 +67,7 @@ export default [
       file: "dist/index.esm.js",
       format: "esm",
       sourcemap: true,
-      name: "MarkerClusterer",
+      name: "markerClusterer",
     },
   },
 ];
