@@ -1098,17 +1098,10 @@ export class MarkerClusterer extends OverlayViewSafe {
     // See Comments 9 & 11 on Issue 3651 relating to this workaround for a Google Maps bug:
     let mapBounds: google.maps.LatLngBounds;
 
-    if (this.getMap().getZoom() > 3) {
-      mapBounds = new google.maps.LatLngBounds(
-        (this.getMap() as google.maps.Map).getBounds().getSouthWest(),
-        (this.getMap() as google.maps.Map).getBounds().getNorthEast()
-      );
-    } else {
-      mapBounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(85.02070771743472, -178.48388434375),
-        new google.maps.LatLng(-85.08136444384544, 178.00048865625)
-      );
-    }
+    mapBounds = new google.maps.LatLngBounds(
+      (this.getMap() as google.maps.Map).getBounds().getSouthWest(),
+      (this.getMap() as google.maps.Map).getBounds().getNorthEast()
+    );
     const bounds = this.getExtendedBounds(mapBounds);
 
     const iLast = Math.min(iFirst + this.batchSize_, this.markers_.length);
