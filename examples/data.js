@@ -1,4 +1,4 @@
-var data = {
+let data = {
   count: 10785236,
   photos: [
     {

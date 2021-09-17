@@ -9,7 +9,7 @@ function $(element) {
   return document.getElementById(element);
 }
 
-var speedTest = {};
+let speedTest = {};
 
 speedTest.pics = null;
 speedTest.map = null;
@@ -18,20 +18,19 @@ speedTest.markers = [];
 speedTest.infoWindow = null;
 
 speedTest.init = function () {
-  var latlng = new google.maps.LatLng(39.91, 116.38);
-  var options = {
+  let latlng = new google.maps.LatLng(39.91, 116.38);
+  let options = {
     zoom: 2,
     center: latlng,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
   };
 
   speedTest.map = new google.maps.Map($("map"), options);
-  speedTest.pics = data.photos;
 
-  var useGmm = document.getElementById("usegmm");
+  let useGmm = document.getElementById("usegmm");
   google.maps.event.addDomListener(useGmm, "click", speedTest.change);
 
-  var numMarkers = document.getElementById("nummarkers");
+  let numMarkers = document.getElementById("nummarkers");
   google.maps.event.addDomListener(numMarkers, "change", speedTest.change);
 
   speedTest.infoWindow = new google.maps.InfoWindow();
@@ -42,7 +41,7 @@ speedTest.init = function () {
 speedTest.showMarkers = function () {
   speedTest.markers = [];
 
-  var type = 1;
+  let type = 1;
   if ($("usegmm").checked) {
     type = 0;
   }
@@ -51,18 +50,18 @@ speedTest.showMarkers = function () {
     speedTest.markerClusterer.clearMarkers();
   }
 
-  var panel = $("markerlist");
+  let panel = $("markerlist");
   panel.innerHTML = "";
-  var numMarkers = $("nummarkers").value;
+  let numMarkers = $("nummarkers").value;
 
-  for (var i = 0; i < numMarkers; i++) {
-    var titleText = speedTest.pics[i].photo_title;
+  for (let i = 0; i < numMarkers; i++) {
+    let titleText = speedTest.pics[i].photo_title;
     if (titleText == "") {
       titleText = "No title";
     }
 
-    var item = document.createElement("DIV");
-    var title = document.createElement("A");
+    let item = document.createElement("DIV");
+    let title = document.createElement("A");
     title.href = "#";
     title.className = "title";
     title.innerHTML = titleText;
@@ -70,25 +69,25 @@ speedTest.showMarkers = function () {
     item.appendChild(title);
     panel.appendChild(item);
 
-    var latLng = new google.maps.LatLng(
+    let latLng = new google.maps.LatLng(
       speedTest.pics[i].latitude,
       speedTest.pics[i].longitude
     );
 
-    var imageUrl =
+    let imageUrl =
       "http://chart.apis.google.com/chart?cht=mm&chs=24x32&chco=" +
       "FFFFFF,008CFF,000000&ext=.png";
-    var markerImage = new google.maps.MarkerImage(
+    let markerImage = new google.maps.MarkerImage(
       imageUrl,
       new google.maps.Size(24, 32)
     );
 
-    var marker = new google.maps.Marker({
+    let marker = new google.maps.Marker({
       position: latLng,
       icon: markerImage,
     });
 
-    var fn = speedTest.markerClickFunction(speedTest.pics[i], latLng);
+    let fn = speedTest.markerClickFunction(speedTest.pics[i], latLng);
     google.maps.event.addListener(marker, "click", fn);
     google.maps.event.addDomListener(title, "click", fn);
     speedTest.markers.push(marker);
@@ -105,11 +104,11 @@ speedTest.markerClickFunction = function (pic, latlng) {
       e.stopPropagation();
       e.preventDefault();
     }
-    var title = pic.photo_title;
-    var url = pic.photo_url;
-    var fileurl = pic.photo_file_url;
+    let title = pic.photo_title;
+    let url = pic.photo_url;
+    let fileurl = pic.photo_file_url;
 
-    var infoHtml =
+    let infoHtml =
       '<div class="info"><h3>' +
       title +
       '</h3><div class="info-body">' +
@@ -135,7 +134,7 @@ speedTest.markerClickFunction = function (pic, latlng) {
 
 speedTest.clear = function () {
   $("timetaken").innerHTML = "cleaning...";
-  for (var i = 0, marker; (marker = speedTest.markers[i]); i++) {
+  for (let i = 0, marker; (marker = speedTest.markers[i]); i++) {
     marker.setMap(null);
   }
 };
@@ -147,18 +146,19 @@ speedTest.change = function () {
 
 speedTest.time = function () {
   $("timetaken").innerHTML = "timing...";
-  var start = new Date();
+  let start = new Date();
   if ($("usegmm").checked) {
+    // eslint-disable-next-line no-undef
     speedTest.markerClusterer = new MarkerClusterer(
       speedTest.map,
       speedTest.markers
     );
   } else {
-    for (var i = 0, marker; (marker = speedTest.markers[i]); i++) {
+    for (let i = 0, marker; (marker = speedTest.markers[i]); i++) {
       marker.setMap(speedTest.map);
     }
   }
 
-  var end = new Date();
+  let end = new Date();
   $("timetaken").innerHTML = end - start;
 };
