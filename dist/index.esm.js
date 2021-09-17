@@ -1430,5 +1430,5 @@ var MarkerClusterer = /** @class */ (function (_super) {
  * limitations under the License.
  */
 
-export default MarkerClusterer;
+export { MarkerClusterer as default };
 //# sourceMappingURL=index.esm.js.map
