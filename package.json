@@ -27,10 +27,10 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "docs": "typedoc src/index.ts",
+    "docs": "typedoc src/index.ts && cp -r dist docs/dist && cp -r examples docs/examples",
     "format": "prettier *.json *.js e2e/* examples/* --write && eslint src/* --fix",
     "lint": "eslint src/*",
-    "prepare": "rollup -c",
+    "prepare": "rm -rf dist && rollup -c",
     "test": "jest --passWithNoTests src/*",
     "test:e2e": "jest --passWithNoTests e2e/*"
   },
