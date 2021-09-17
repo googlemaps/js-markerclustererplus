@@ -23,7 +23,8 @@ import { ClusterIcon } from "./cluster-icon";
  */
 export class Cluster {
   private map_ = this.markerClusterer_.getMap() as google.maps.Map;
-  private minClusterSize_: number = this.markerClusterer_.getMinimumClusterSize();
+  private minClusterSize_: number =
+    this.markerClusterer_.getMinimumClusterSize();
   private averageCenter_: boolean = this.markerClusterer_.getAverageCenter();
   private markers_: ClusterAugmentedMarker[] = []; // TODO: type;
   private center_: google.maps.LatLng = null;
