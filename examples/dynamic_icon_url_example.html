@@ -31,10 +31,7 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=false"></script>
     <script type="text/javascript" src="data.js"></script>
-    <script
-      type="text/javascript"
-      src="../dist/index.min.js"
-    ></script>
+    <script type="text/javascript" src="../dist/index.min.js"></script>
 
     <script type="text/javascript">
       const styleCluster = [
@@ -94,7 +91,7 @@
               index++;
             }
 
-            const iconUrl = `https://chart.googleapis.com/chart?chs=150x150&chd=t:${count},${markers.length}&cht=p3&chf=bg,s,FFFFFF00`
+            const iconUrl = `https://chart.googleapis.com/chart?chs=150x150&chd=t:${count},${markers.length}&cht=p3&chf=bg,s,FFFFFF00`;
 
             index = Math.min(index, numStyles);
             return {
@@ -103,7 +100,7 @@
               index: index,
               title: "",
             };
-          }
+          },
         });
       }
       google.maps.event.addDomListener(window, "load", initialize);
