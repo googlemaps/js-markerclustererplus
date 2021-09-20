@@ -1,165 +1,57 @@
-<!doctype html>
-<html class="default no-js">
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@googlemaps/js-markerclustererplus</title>
-	<meta name="description" content="Documentation for @googlemaps/js-markerclustererplus">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="assets/css/main.css">
-	<script async src="assets/js/search.js" id="search-script"></script>
-</head>
-<body>
-<header>
-	<div class="tsd-page-toolbar">
-		<div class="container">
-			<div class="table-wrap">
-				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
-					<div class="field">
-						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
-						<input id="tsd-search-field" type="text" />
-					</div>
-					<ul class="results">
-						<li class="state loading">Preparing search index...</li>
-						<li class="state failure">The search index is not available</li>
-					</ul>
-					<a href="index.html" class="title">@googlemaps/js-markerclustererplus</a>
-				</div>
-				<div class="table-cell" id="tsd-widgets">
-					<div id="tsd-filter">
-						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
-						<div class="tsd-filter-group">
-							<div class="tsd-select" id="tsd-filter-visibility">
-								<span class="tsd-select-label">All</span>
-								<ul class="tsd-select-list">
-									<li data-value="public">Public</li>
-									<li data-value="protected">Public/Protected</li>
-									<li data-value="private" class="selected">All</li>
-								</ul>
-							</div>
-							<input type="checkbox" id="tsd-filter-inherited" checked />
-							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
-						</div>
-					</div>
-					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="tsd-page-title">
-		<div class="container">
-			<h1>@googlemaps/js-markerclustererplus</h1>
-		</div>
-	</div>
-</header>
-<div class="container container-main">
-	<div class="row">
-		<div class="col-8 col-content">
-			<div class="tsd-panel tsd-typography">
-				<a href="#google-maps-javascript-markerclustererplus" id="google-maps-javascript-markerclustererplus" style="color: inherit; text-decoration: none;">
-					<h1>Google Maps JavaScript MarkerClustererPlus</h1>
-				</a>
-				<p><a href="https://www.npmjs.com/package/@googlemaps/markerclustererplus"><img src="https://img.shields.io/npm/v/@googlemaps/markerclustererplus" alt="npm"></a>
-					<img src="https://github.com/googlemaps/js-markerclustererplus/workflows/Build/badge.svg" alt="Build">
-					<img src="https://github.com/googlemaps/js-markerclustererplus/workflows/Release/badge.svg" alt="Release">
-					<a href="https://codecov.io/gh/googlemaps/js-markerclustererplus"><img src="https://codecov.io/gh/googlemaps/js-markerclustererplus/branch/main/graph/badge.svg" alt="codecov"></a>
-					<img src="https://img.shields.io/github/contributors/googlemaps/js-markerclustererplus?color=green" alt="GitHub contributors">
-					<a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release"></a>
-				<a href="https://github.com/apps/in-solidarity"><img src="https://github.com/jpoehnelt/in-solidarity-bot/raw/main/static//badge-flat.png" alt=""></a></p>
-				<a href="#description" id="description" style="color: inherit; text-decoration: none;">
-					<h2>Description</h2>
-				</a>
-				<p>The library creates and manages per-zoom-level clusters for large amounts of markers.</p>
-				<blockquote>
-					<p><strong>Note</strong>: This library is the same as the existing library <code>@google/markerclustererplus</code>, but renamed and in its own repository. All future development will continue here.</p>
-				</blockquote>
-				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
-					<h2>Install</h2>
-				</a>
-				<p>Available via npm as the package <a href="https://www.npmjs.com/package/@googlemaps/markerclustererplus">@googlemaps/markerclustererplus</a>.</p>
-				<p><code>npm i @googlemaps/markerclustererplus</code></p>
-				<p>or</p>
-				<p><code>yarn add @googlemaps/markerclustererplus</code></p>
-				<p>Alternativly you may add the umd package directly to the html document using the unpkg link.</p>
-				<p><code>&lt;script src=&quot;https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js&quot;&gt;&lt;/script&gt;</code></p>
-				<p>When adding via unpkg, the loader can be accessed at <code>MarkerClusterer</code>.</p>
-				<p>A version can be specified by using <code>https://unpkg.com/@googlemaps/markerclustererplus@VERSION/dist/...</code>.</p>
-				<a href="#typescript" id="typescript" style="color: inherit; text-decoration: none;">
-					<h4>TypeScript</h4>
-				</a>
-				<p>This library uses the official TypeScript typings for Google Maps Platform, <a href="https://www.npmjs.com/package/@types/google.maps">@types/google.maps</a>.</p>
-				<p><code>npm i -D @types/google.maps</code></p>
-				<p>It may also require the <a href="https://www.typescriptlang.org/tsconfig#skipLibCheck">skipLibCheck</a> TypeScript compiler option.</p>
-				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
-					<h2>Documentation</h2>
-				</a>
-				<p>The reference documentation can be found at this <a href="https://googlemaps.github.io/js-markerclustererplus/index.html">link</a>.</p>
-				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
-					<h2>Example</h2>
-				</a>
-				<pre><code class="language-js"><span style="color: #AF00DB">import</span><span style="color: #000000"> </span><span style="color: #001080">MarkerClusterer</span><span style="color: #000000"> </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;@googlemaps/markerclustererplus&#039;</span><span style="color: #000000">;</span>
+<!DOCTYPE html><html class="default no-js"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>@googlemaps/js-markerclustererplus</title><meta name="description" content="Documentation for @googlemaps/js-markerclustererplus"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script></head><body><header><div class="tsd-page-toolbar"><div class="container"><div class="table-wrap"><div class="table-cell" id="tsd-search" data-base="."><div class="field"><label for="tsd-search-field" class="tsd-widget search no-caption">Search</label><input type="text" id="tsd-search-field"/></div><ul class="results"><li class="state loading">Preparing search index...</li><li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">@googlemaps/js-markerclustererplus</a></div><div class="table-cell" id="tsd-widgets"><div id="tsd-filter"><a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a><div class="tsd-filter-group"><div class="tsd-select" id="tsd-filter-visibility"><span class="tsd-select-label">All</span><ul class="tsd-select-list"><li data-value="public">Public</li><li data-value="protected">Public/Protected</li><li data-value="private" class="selected">All</li></ul></div> <input type="checkbox" id="tsd-filter-inherited" checked/><label class="tsd-widget" for="tsd-filter-inherited">Inherited</label></div></div><a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a></div></div></div></div><div class="tsd-page-title"><div class="container"><h1>@googlemaps/js-markerclustererplus</h1></div></div></header><div class="container container-main"><div class="row"><div class="col-8 col-content"><div class="tsd-panel tsd-typography">
+<a href="#google-maps-javascript-markerclustererplus" id="google-maps-javascript-markerclustererplus" style="color: inherit; text-decoration: none;">
+  <h1>Google Maps JavaScript MarkerClustererPlus</h1>
+</a>
+<p><a href="https://www.npmjs.com/package/@googlemaps/markerclustererplus"><img src="https://img.shields.io/npm/v/@googlemaps/markerclustererplus" alt="npm"></a>
+<img src="https://github.com/googlemaps/js-markerclustererplus/workflows/Build/badge.svg" alt="Build">
+<img src="https://github.com/googlemaps/js-markerclustererplus/workflows/Release/badge.svg" alt="Release">
+<a href="https://codecov.io/gh/googlemaps/js-markerclustererplus"><img src="https://codecov.io/gh/googlemaps/js-markerclustererplus/branch/main/graph/badge.svg" alt="codecov"></a>
+<img src="https://img.shields.io/github/contributors/googlemaps/js-markerclustererplus?color=green" alt="GitHub contributors">
+<a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release"></a>
+<a href="https://github.com/apps/in-solidarity"><img src="https://github.com/jpoehnelt/in-solidarity-bot/raw/main/static//badge-flat.png" alt=""></a></p>
 
-<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">markerCluster</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">MarkerClusterer</span><span style="color: #000000">(</span><span style="color: #001080">map</span><span style="color: #000000">, </span><span style="color: #001080">markers</span><span style="color: #000000">);</span>
+<a href="#description" id="description" style="color: inherit; text-decoration: none;">
+  <h2>Description</h2>
+</a>
+<p>The library creates and manages per-zoom-level clusters for large amounts of markers.</p>
+<blockquote>
+<p><strong>Note</strong>: This library is the same as the existing library <code>@google/markerclustererplus</code>, but renamed and in its own repository. All future development will continue here.</p>
+</blockquote>
+
+<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+  <h2>Install</h2>
+</a>
+<p>Available via npm as the package <a href="https://www.npmjs.com/package/@googlemaps/markerclustererplus">@googlemaps/markerclustererplus</a>.</p>
+<p><code>npm i @googlemaps/markerclustererplus</code></p>
+<p>or</p>
+<p><code>yarn add @googlemaps/markerclustererplus</code></p>
+<p>Alternativly you may add the umd package directly to the html document using the unpkg link.</p>
+<p><code>&lt;script src=&quot;https://unpkg.com/@googlemaps/markerclustererplus/dist/index.min.js&quot;&gt;&lt;/script&gt;</code></p>
+<p>When adding via unpkg, the loader can be accessed at <code>MarkerClusterer</code>.</p>
+<p>A version can be specified by using <code>https://unpkg.com/@googlemaps/markerclustererplus@VERSION/dist/...</code>.</p>
+
+<a href="#typescript" id="typescript" style="color: inherit; text-decoration: none;">
+  <h4>TypeScript</h4>
+</a>
+<p>This library uses the official TypeScript typings for Google Maps Platform, <a href="https://www.npmjs.com/package/@types/google.maps">@types/google.maps</a>.</p>
+<p><code>npm i -D @types/google.maps</code></p>
+<p>It may also require the <a href="https://www.typescriptlang.org/tsconfig#skipLibCheck">skipLibCheck</a> TypeScript compiler option.</p>
+
+<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+  <h2>Documentation</h2>
+</a>
+<p>The reference documentation can be found at this <a href="https://googlemaps.github.io/js-markerclustererplus/index.html">link</a>.</p>
+
+<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+  <h2>Example</h2>
+</a>
+<pre><code class="language-js"><span class="hl-0">import</span><span class="hl-1"> </span><span class="hl-2">MarkerClusterer</span><span class="hl-1"> </span><span class="hl-0">from</span><span class="hl-1"> </span><span class="hl-3">&#39;@googlemaps/markerclustererplus&#39;</span><span class="hl-1">;</span><br/><br/><span class="hl-4">const</span><span class="hl-1"> </span><span class="hl-5">markerCluster</span><span class="hl-1"> = </span><span class="hl-4">new</span><span class="hl-1"> </span><span class="hl-6">MarkerClusterer</span><span class="hl-1">(</span><span class="hl-2">map</span><span class="hl-1">, </span><span class="hl-2">markers</span><span class="hl-1">);</span>
 </code></pre>
-				<p>View the package in action:</p>
-				<ul>
-					<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/simple_example.html">Simple Example</a></li>
-					<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/advanced_example.html">Advanced Example</a></li>
-					<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/events_example.html">Events Example</a></li>
-					<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/speed_test_example.html">Speed Test Example</a></li>
-				</ul>
-			</div>
-		</div>
-		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
-			<nav class="tsd-navigation primary">
-				<ul>
-					<li class=" ">
-						<a href="modules.html">Exports</a>
-					</li>
-				</ul>
-			</nav>
-			<nav class="tsd-navigation secondary menu-sticky">
-				<ul class="before-current">
-					<li class=" tsd-kind-class">
-						<a href="classes/default.html" class="tsd-kind-icon">default</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/clustericoninfo.html" class="tsd-kind-icon">Cluster<wbr>Icon<wbr>Info</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/clustericonstyle.html" class="tsd-kind-icon">Cluster<wbr>Icon<wbr>Style</a>
-					</li>
-					<li class=" tsd-kind-interface">
-						<a href="interfaces/markerclustereroptions.html" class="tsd-kind-icon">Marker<wbr>Clusterer<wbr>Options</a>
-					</li>
-				</ul>
-			</nav>
-		</div>
-	</div>
-</div>
-<footer class="with-border-bottom">
-	<div class="container">
-		<h2>Legend</h2>
-		<div class="tsd-legend-group">
-			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
-				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
-				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-			</ul>
-		</div>
-	</div>
-</footer>
-<div class="container tsd-generator">
-	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
-</div>
-<div class="overlay"></div>
-<script src="assets/js/main.js"></script>
-</body>
-</html>
+<p>View the package in action:</p>
+<ul>
+<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/simple_example.html">Simple Example</a></li>
+<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/advanced_example.html">Advanced Example</a></li>
+<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/events_example.html">Events Example</a></li>
+<li><a href="https://googlemaps.github.io/js-markerclustererplus/examples/speed_test_example.html">Speed Test Example</a></li>
+</ul>
+</div></div><div class="col-4 col-menu menu-sticky-wrap menu-highlight"><nav class="tsd-navigation primary"><ul><li class="current"><a href="modules.html">Exports</a></li></ul></nav><nav class="tsd-navigation secondary menu-sticky"><ul><li class="tsd-kind-class"><a href="classes/default.html" class="tsd-kind-icon">default</a></li><li class="tsd-kind-interface"><a href="interfaces/ClusterIconInfo.html" class="tsd-kind-icon">Cluster<wbr/>Icon<wbr/>Info</a></li><li class="tsd-kind-interface"><a href="interfaces/ClusterIconStyle.html" class="tsd-kind-icon">Cluster<wbr/>Icon<wbr/>Style</a></li><li class="tsd-kind-interface"><a href="interfaces/MarkerClustererOptions.html" class="tsd-kind-icon">Marker<wbr/>Clusterer<wbr/>Options</a></li></ul></nav></div></div></div><footer class="with-border-bottom"><div class="container"><h2>Legend</h2><div class="tsd-legend-group"><ul class="tsd-legend"><li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li><li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li><li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li><li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li></ul><ul class="tsd-legend"><li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li></ul></div><h2>Settings</h2><p>Theme <select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></p></div></footer><div class="container tsd-generator"><p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p></div><div class="overlay"></div><script src="assets/main.js"></script></body></html>
