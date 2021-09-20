@@ -38,7 +38,7 @@
     "@babel/preset-env": "^7.11.5",
     "@babel/runtime-corejs3": "^7.11.2",
     "@types/google.maps": "^3.44.2",
-    "@types/jest": "^26.0.13",
+    "@types/jest": "^27.0.1",
     "@types/selenium-webdriver": "^4.0.9",
     "@typescript-eslint/eslint-plugin": ">=4.1.0",
     "@typescript-eslint/parser": ">=4.1.0",
