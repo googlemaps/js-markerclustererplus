@@ -31,10 +31,7 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?v=3&amp;sensor=false"></script>
     <script type="text/javascript" src="data.js"></script>
-    <script
-      type="text/javascript"
-      src="../dist/index.min.js"
-    ></script>
+    <script type="text/javascript" src="../dist/index.min.js"></script>
 
     <script type="text/javascript">
       function initialize() {
@@ -73,11 +70,15 @@
           }
           log("&mdash;Locations of managed markers: " + p.join(", "));
         });
-        google.maps.event.addListener(markerCluster, "contextmenu", function (c) {
-          log("contextmenu: ");
-          log("&mdash;Center of cluster: " + c.getCenter());
-          log("&mdash;Number of managed markers in cluster: " + c.getSize());
-        });
+        google.maps.event.addListener(
+          markerCluster,
+          "contextmenu",
+          function (c) {
+            log("contextmenu: ");
+            log("&mdash;Center of cluster: " + c.getCenter());
+            log("&mdash;Number of managed markers in cluster: " + c.getSize());
+          }
+        );
         google.maps.event.addListener(markerCluster, "mouseover", function (c) {
           log("mouseover: ");
           log("&mdash;Center of cluster: " + c.getCenter());

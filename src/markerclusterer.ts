@@ -426,7 +426,7 @@ export class MarkerClusterer extends OverlayViewSafe {
    * Implementation of the draw interface method.
    * @ignore
    */
-  draw(): void {}
+  draw(): void {} // eslint-disable-line @typescript-eslint/no-empty-function
 
   /**
    * Sets up the styles object.
@@ -1094,11 +1094,7 @@ export class MarkerClusterer extends OverlayViewSafe {
 
     // Get our current map view bounds.
     // Create a new bounds object so we don't affect the map.
-    //
-    // See Comments 9 & 11 on Issue 3651 relating to this workaround for a Google Maps bug:
-    let mapBounds: google.maps.LatLngBounds;
-
-    mapBounds = new google.maps.LatLngBounds(
+    const mapBounds = new google.maps.LatLngBounds(
       (this.getMap() as google.maps.Map).getBounds().getSouthWest(),
       (this.getMap() as google.maps.Map).getBounds().getNorthEast()
     );
