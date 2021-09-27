@@ -36,7 +36,7 @@ var MarkerClusterer = (function () {
     return this;
   }() || Function('return this')();
 
-  // `isCallable` abstract operation
+  // `IsCallable` abstract operation
   // https://tc39.es/ecma262/#sec-iscallable
   var isCallable = function (argument) {
     return typeof argument === 'function';
@@ -208,7 +208,7 @@ var MarkerClusterer = (function () {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.18.0',
+      version: '3.18.1',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
