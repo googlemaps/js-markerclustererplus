@@ -12,7 +12,9 @@
 
 The library creates and manages per-zoom-level clusters for large amounts of markers.
 
-> **Note**: This library is the same as the existing library `@google/markerclustererplus`, but renamed and in its own repository. All future development will continue here.
+> **Note**: This library has been refactored into [@googlemaps/markerclusterer](https://www.npmjs.com/package/@googlemaps/markerclusterer), check out the new and improved version!
+
+> **Note**: This library is the same as the existing library `@google/markerclustererplus`, but renamed and in its own repository.
 
 ## Install
 
