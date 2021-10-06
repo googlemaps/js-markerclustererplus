@@ -71,9 +71,10 @@ var MarkerClusterer = (function () {
     return Object(requireObjectCoercible(argument));
   };
 
-  var hasOwnProperty = {}.hasOwnProperty;
+  var hasOwnProperty = {}.hasOwnProperty; // `HasOwnProperty` abstract operation
+  // https://tc39.es/ecma262/#sec-hasownproperty
 
-  var has$1 = Object.hasOwn || function hasOwn(it, key) {
+  var hasOwnProperty_1 = Object.hasOwn || function hasOwn(it, key) {
     return hasOwnProperty.call(toObject(it), key);
   };
 
@@ -208,7 +209,7 @@ var MarkerClusterer = (function () {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.18.1',
+      version: '3.18.2',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -226,8 +227,8 @@ var MarkerClusterer = (function () {
   var createWellKnownSymbol = useSymbolAsUid ? Symbol$2 : Symbol$2 && Symbol$2.withoutSetter || uid;
 
   var wellKnownSymbol = function (name) {
-    if (!has$1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
-      if (nativeSymbol && has$1(Symbol$2, name)) {
+    if (!hasOwnProperty_1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
+      if (nativeSymbol && hasOwnProperty_1(Symbol$2, name)) {
         WellKnownSymbolsStore[name] = Symbol$2[name];
       } else {
         WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
@@ -365,18 +366,18 @@ var MarkerClusterer = (function () {
     hiddenKeys$1[STATE] = true;
 
     set = function (it, metadata) {
-      if (has$1(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+      if (hasOwnProperty_1(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       createNonEnumerableProperty(it, STATE, metadata);
       return metadata;
     };
 
     get = function (it) {
-      return has$1(it, STATE) ? it[STATE] : {};
+      return hasOwnProperty_1(it, STATE) ? it[STATE] : {};
     };
 
     has = function (it) {
-      return has$1(it, STATE);
+      return hasOwnProperty_1(it, STATE);
     };
   }
 
@@ -391,7 +392,7 @@ var MarkerClusterer = (function () {
   var FunctionPrototype = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
   var getDescriptor = descriptors && Object.getOwnPropertyDescriptor;
-  var EXISTS = has$1(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
+  var EXISTS = hasOwnProperty_1(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
 
   var PROPER = EXISTS && function something() {
     /* empty */
@@ -421,7 +422,7 @@ var MarkerClusterer = (function () {
           name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
         }
 
-        if (!has$1(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
+        if (!hasOwnProperty_1(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
           createNonEnumerableProperty(value, 'name', name);
         }
 
@@ -446,12 +447,6 @@ var MarkerClusterer = (function () {
       return isCallable(this) && getInternalState(this).source || inspectSource(this);
     });
   });
-
-  var toString = {}.toString;
-
-  var classofRaw = function (it) {
-    return toString.call(it).slice(8, -1);
-  };
 
   var aPossiblePrototype = function (argument) {
     if (typeof argument === 'object' || isCallable(argument)) return argument;
@@ -494,6 +489,12 @@ var MarkerClusterer = (function () {
     return $this;
   };
 
+  var toString = {}.toString;
+
+  var classofRaw = function (it) {
+    return toString.call(it).slice(8, -1);
+  };
+
   var split = ''.split; // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
   var indexedObject = fails(function () {
@@ -509,34 +510,42 @@ var MarkerClusterer = (function () {
   };
 
   var ceil = Math.ceil;
-  var floor$1 = Math.floor; // `ToInteger` abstract operation
-  // https://tc39.es/ecma262/#sec-tointeger
+  var floor$1 = Math.floor; // `ToIntegerOrInfinity` abstract operation
+  // https://tc39.es/ecma262/#sec-tointegerorinfinity
 
-  var toInteger = function (argument) {
-    return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor$1 : ceil)(argument);
-  };
+  var toIntegerOrInfinity = function (argument) {
+    var number = +argument; // eslint-disable-next-line no-self-compare -- safe
 
-  var min$4 = Math.min; // `ToLength` abstract operation
-  // https://tc39.es/ecma262/#sec-tolength
-
-  var toLength = function (argument) {
-    return argument > 0 ? min$4(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+    return number !== number || number === 0 ? 0 : (number > 0 ? floor$1 : ceil)(number);
   };
 
   var max$3 = Math.max;
-  var min$3 = Math.min; // Helper for a popular repeating case of the spec:
+  var min$4 = Math.min; // Helper for a popular repeating case of the spec:
   // Let integer be ? ToInteger(index).
   // If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
 
   var toAbsoluteIndex = function (index, length) {
-    var integer = toInteger(index);
-    return integer < 0 ? max$3(integer + length, 0) : min$3(integer, length);
+    var integer = toIntegerOrInfinity(index);
+    return integer < 0 ? max$3(integer + length, 0) : min$4(integer, length);
+  };
+
+  var min$3 = Math.min; // `ToLength` abstract operation
+  // https://tc39.es/ecma262/#sec-tolength
+
+  var toLength = function (argument) {
+    return argument > 0 ? min$3(toIntegerOrInfinity(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+  };
+
+  // https://tc39.es/ecma262/#sec-lengthofarraylike
+
+  var lengthOfArrayLike = function (obj) {
+    return toLength(obj.length);
   };
 
   var createMethod$3 = function (IS_INCLUDES) {
     return function ($this, el, fromIndex) {
       var O = toIndexedObject($this);
-      var length = toLength(O.length);
+      var length = lengthOfArrayLike(O);
       var index = toAbsoluteIndex(fromIndex, length);
       var value; // Array#includes uses SameValueZero equality algorithm
       // eslint-disable-next-line no-self-compare -- NaN check
@@ -569,10 +578,10 @@ var MarkerClusterer = (function () {
     var result = [];
     var key;
 
-    for (key in O) !has$1(hiddenKeys$1, key) && has$1(O, key) && result.push(key); // Don't enum bug & hidden keys
+    for (key in O) !hasOwnProperty_1(hiddenKeys$1, key) && hasOwnProperty_1(O, key) && result.push(key); // Don't enum bug & hidden keys
 
 
-    while (names.length > i) if (has$1(O, key = names[i++])) {
+    while (names.length > i) if (hasOwnProperty_1(O, key = names[i++])) {
       ~indexOf(result, key) || result.push(key);
     }
 
@@ -581,114 +590,6 @@ var MarkerClusterer = (function () {
 
   // IE8- don't enum bug keys
   var enumBugKeys = ['constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf'];
-
-  // https://tc39.es/ecma262/#sec-object.keys
-  // eslint-disable-next-line es/no-object-keys -- safe
-
-  var objectKeys = Object.keys || function keys(O) {
-    return objectKeysInternal(O, enumBugKeys);
-  };
-
-  // https://tc39.es/ecma262/#sec-object.defineproperties
-  // eslint-disable-next-line es/no-object-defineproperties -- safe
-
-  var objectDefineProperties = descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
-    anObject(O);
-    var keys = objectKeys(Properties);
-    var length = keys.length;
-    var index = 0;
-    var key;
-
-    while (length > index) objectDefineProperty.f(O, key = keys[index++], Properties[key]);
-
-    return O;
-  };
-
-  var html = getBuiltIn('document', 'documentElement');
-
-  /* global ActiveXObject -- old IE, WSH */
-
-  var GT = '>';
-  var LT = '<';
-  var PROTOTYPE = 'prototype';
-  var SCRIPT = 'script';
-  var IE_PROTO = sharedKey('IE_PROTO');
-
-  var EmptyConstructor = function () {
-    /* empty */
-  };
-
-  var scriptTag = function (content) {
-    return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
-  }; // Create object with fake `null` prototype: use ActiveX Object with cleared prototype
-
-
-  var NullProtoObjectViaActiveX = function (activeXDocument) {
-    activeXDocument.write(scriptTag(''));
-    activeXDocument.close();
-    var temp = activeXDocument.parentWindow.Object;
-    activeXDocument = null; // avoid memory leak
-
-    return temp;
-  }; // Create object with fake `null` prototype: use iframe Object with cleared prototype
-
-
-  var NullProtoObjectViaIFrame = function () {
-    // Thrash, waste and sodomy: IE GC bug
-    var iframe = documentCreateElement('iframe');
-    var JS = 'java' + SCRIPT + ':';
-    var iframeDocument;
-    iframe.style.display = 'none';
-    html.appendChild(iframe); // https://github.com/zloirock/core-js/issues/475
-
-    iframe.src = String(JS);
-    iframeDocument = iframe.contentWindow.document;
-    iframeDocument.open();
-    iframeDocument.write(scriptTag('document.F=Object'));
-    iframeDocument.close();
-    return iframeDocument.F;
-  }; // Check for document.domain and active x support
-  // No need to use active x approach when document.domain is not set
-  // see https://github.com/es-shims/es5-shim/issues/150
-  // variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
-  // avoid IE GC bug
-
-
-  var activeXDocument;
-
-  var NullProtoObject = function () {
-    try {
-      activeXDocument = new ActiveXObject('htmlfile');
-    } catch (error) {
-      /* ignore */
-    }
-
-    NullProtoObject = typeof document != 'undefined' ? document.domain && activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) // old IE
-    : NullProtoObjectViaIFrame() : NullProtoObjectViaActiveX(activeXDocument); // WSH
-
-    var length = enumBugKeys.length;
-
-    while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
-
-    return NullProtoObject();
-  };
-
-  hiddenKeys$1[IE_PROTO] = true; // `Object.create` method
-  // https://tc39.es/ecma262/#sec-object.create
-
-  var objectCreate = Object.create || function create(O, Properties) {
-    var result;
-
-    if (O !== null) {
-      EmptyConstructor[PROTOTYPE] = anObject(O);
-      result = new EmptyConstructor();
-      EmptyConstructor[PROTOTYPE] = null; // add "__proto__" for Object.getPrototypeOf polyfill
-
-      result[IE_PROTO] = O;
-    } else result = NullProtoObject();
-
-    return Properties === undefined ? result : objectDefineProperties(result, Properties);
-  };
 
   var hiddenKeys = enumBugKeys.concat('length', 'prototype'); // `Object.getOwnPropertyNames` method
   // https://tc39.es/ecma262/#sec-object.getownpropertynames
@@ -730,10 +631,17 @@ var MarkerClusterer = (function () {
     } catch (error) {
       /* empty */
     }
-    if (has$1(O, P)) return createPropertyDescriptor(!objectPropertyIsEnumerable.f.call(O, P), O[P]);
+    if (hasOwnProperty_1(O, P)) return createPropertyDescriptor(!objectPropertyIsEnumerable.f.call(O, P), O[P]);
   };
   var objectGetOwnPropertyDescriptor = {
     f: f$1
+  };
+
+  var valueOf = 1.0.valueOf; // `thisNumberValue` abstract operation
+  // https://tc39.es/ecma262/#sec-thisnumbervalue
+
+  var thisNumberValue = function (value) {
+    return valueOf.call(value);
   };
 
   var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag');
@@ -803,15 +711,20 @@ var MarkerClusterer = (function () {
   var trim$1 = stringTrim.trim;
   var NUMBER = 'Number';
   var NativeNumber = global_1[NUMBER];
-  var NumberPrototype = NativeNumber.prototype; // Opera ~12 has broken Object#toString
+  var NumberPrototype = NativeNumber.prototype; // `ToNumeric` abstract operation
+  // https://tc39.es/ecma262/#sec-tonumeric
 
-  var BROKEN_CLASSOF = classofRaw(objectCreate(NumberPrototype)) == NUMBER; // `ToNumber` abstract operation
+  var toNumeric = function (value) {
+    var primValue = toPrimitive(value, 'number');
+    return typeof primValue === 'bigint' ? primValue : toNumber(primValue);
+  }; // `ToNumber` abstract operation
   // https://tc39.es/ecma262/#sec-tonumber
 
+
   var toNumber = function (argument) {
-    if (isSymbol(argument)) throw TypeError('Cannot convert a Symbol value to a number');
     var it = toPrimitive(argument, 'number');
     var first, third, radix, maxCode, digits, length, index, code;
+    if (isSymbol(it)) throw TypeError('Cannot convert a Symbol value to a number');
 
     if (typeof it == 'string' && it.length > 2) {
       it = trim$1(it);
@@ -861,19 +774,19 @@ var MarkerClusterer = (function () {
 
   if (isForced_1(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumber('+0x1'))) {
     var NumberWrapper = function Number(value) {
-      var it = arguments.length < 1 ? 0 : value;
-      var dummy = this;
-      return dummy instanceof NumberWrapper // check on 1..constructor(foo) case
-      && (BROKEN_CLASSOF ? fails(function () {
-        NumberPrototype.valueOf.call(dummy);
-      }) : classofRaw(dummy) != NUMBER) ? inheritIfRequired(new NativeNumber(toNumber(it)), dummy, NumberWrapper) : toNumber(it);
+      var n = arguments.length < 1 ? 0 : NativeNumber(toNumeric(value));
+      var dummy = this; // check on 1..constructor(foo) case
+
+      return dummy instanceof NumberWrapper && fails(function () {
+        thisNumberValue(dummy);
+      }) ? inheritIfRequired(Object(n), dummy, NumberWrapper) : n;
     };
 
     for (var keys = descriptors ? getOwnPropertyNames(NativeNumber) : ( // ES3:
     'MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,' + // ES2015 (in case, if modules with ES2015 Number statics required before):
-    'EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,' + 'MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger,' + // ESNext
+    'EPSILON,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,isFinite,isInteger,isNaN,isSafeInteger,parseFloat,parseInt,' + // ESNext
     'fromString,range').split(','), j = 0, key; keys.length > j; j++) {
-      if (has$1(NativeNumber, key = keys[j]) && !has$1(NumberWrapper, key)) {
+      if (hasOwnProperty_1(NativeNumber, key = keys[j]) && !hasOwnProperty_1(NumberWrapper, key)) {
         defineProperty(NumberWrapper, key, getOwnPropertyDescriptor$1(NativeNumber, key));
       }
     }
@@ -902,7 +815,7 @@ var MarkerClusterer = (function () {
 
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i];
-      if (!has$1(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+      if (!hasOwnProperty_1(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
     }
   };
 
@@ -1109,7 +1022,7 @@ var MarkerClusterer = (function () {
     /* , ...items */
     ) {
       var O = toObject(this);
-      var len = toLength(O.length);
+      var len = lengthOfArrayLike(O);
       var actualStart = toAbsoluteIndex(start, len);
       var argumentsLength = arguments.length;
       var insertCount, actualDeleteCount, A, k, from, to;
@@ -1121,7 +1034,7 @@ var MarkerClusterer = (function () {
         actualDeleteCount = len - actualStart;
       } else {
         insertCount = argumentsLength - 2;
-        actualDeleteCount = min$2(max$2(toInteger(deleteCount), 0), len - actualStart);
+        actualDeleteCount = min$2(max$2(toIntegerOrInfinity(deleteCount), 0), len - actualStart);
       }
 
       if (len + insertCount - actualDeleteCount > MAX_SAFE_INTEGER) {
@@ -1176,7 +1089,7 @@ var MarkerClusterer = (function () {
   }, {
     slice: function slice(start, end) {
       var O = toIndexedObject(this);
-      var length = toLength(O.length);
+      var length = lengthOfArrayLike(O);
       var k = toAbsoluteIndex(start, length);
       var fin = toAbsoluteIndex(end === undefined ? length : end, length); // inline `ArraySpeciesCreate` for usage native `Array#slice` where it's possible
 
@@ -1324,7 +1237,7 @@ var MarkerClusterer = (function () {
       aCallable(callbackfn);
       var O = toObject(that);
       var self = indexedObject(O);
-      var length = toLength(O.length);
+      var length = lengthOfArrayLike(O);
       var index = IS_RIGHT ? length - 1 : 0;
       var i = IS_RIGHT ? -1 : 1;
       if (argumentsLength < 2) while (true) {
@@ -1379,6 +1292,13 @@ var MarkerClusterer = (function () {
     }
   });
 
+  // https://tc39.es/ecma262/#sec-object.keys
+  // eslint-disable-next-line es/no-object-keys -- safe
+
+  var objectKeys = Object.keys || function keys(O) {
+    return objectKeysInternal(O, enumBugKeys);
+  };
+
   var FAILS_ON_PRIMITIVES = fails(function () {
     objectKeys(1);
   }); // `Object.keys` method
@@ -1409,6 +1329,107 @@ var MarkerClusterer = (function () {
   var regexpStickyHelpers = {
     UNSUPPORTED_Y: UNSUPPORTED_Y$2,
     BROKEN_CARET: BROKEN_CARET
+  };
+
+  // https://tc39.es/ecma262/#sec-object.defineproperties
+  // eslint-disable-next-line es/no-object-defineproperties -- safe
+
+  var objectDefineProperties = descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
+    anObject(O);
+    var keys = objectKeys(Properties);
+    var length = keys.length;
+    var index = 0;
+    var key;
+
+    while (length > index) objectDefineProperty.f(O, key = keys[index++], Properties[key]);
+
+    return O;
+  };
+
+  var html = getBuiltIn('document', 'documentElement');
+
+  /* global ActiveXObject -- old IE, WSH */
+
+  var GT = '>';
+  var LT = '<';
+  var PROTOTYPE = 'prototype';
+  var SCRIPT = 'script';
+  var IE_PROTO = sharedKey('IE_PROTO');
+
+  var EmptyConstructor = function () {
+    /* empty */
+  };
+
+  var scriptTag = function (content) {
+    return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
+  }; // Create object with fake `null` prototype: use ActiveX Object with cleared prototype
+
+
+  var NullProtoObjectViaActiveX = function (activeXDocument) {
+    activeXDocument.write(scriptTag(''));
+    activeXDocument.close();
+    var temp = activeXDocument.parentWindow.Object;
+    activeXDocument = null; // avoid memory leak
+
+    return temp;
+  }; // Create object with fake `null` prototype: use iframe Object with cleared prototype
+
+
+  var NullProtoObjectViaIFrame = function () {
+    // Thrash, waste and sodomy: IE GC bug
+    var iframe = documentCreateElement('iframe');
+    var JS = 'java' + SCRIPT + ':';
+    var iframeDocument;
+    iframe.style.display = 'none';
+    html.appendChild(iframe); // https://github.com/zloirock/core-js/issues/475
+
+    iframe.src = String(JS);
+    iframeDocument = iframe.contentWindow.document;
+    iframeDocument.open();
+    iframeDocument.write(scriptTag('document.F=Object'));
+    iframeDocument.close();
+    return iframeDocument.F;
+  }; // Check for document.domain and active x support
+  // No need to use active x approach when document.domain is not set
+  // see https://github.com/es-shims/es5-shim/issues/150
+  // variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
+  // avoid IE GC bug
+
+
+  var activeXDocument;
+
+  var NullProtoObject = function () {
+    try {
+      activeXDocument = new ActiveXObject('htmlfile');
+    } catch (error) {
+      /* ignore */
+    }
+
+    NullProtoObject = typeof document != 'undefined' ? document.domain && activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) // old IE
+    : NullProtoObjectViaIFrame() : NullProtoObjectViaActiveX(activeXDocument); // WSH
+
+    var length = enumBugKeys.length;
+
+    while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
+
+    return NullProtoObject();
+  };
+
+  hiddenKeys$1[IE_PROTO] = true; // `Object.create` method
+  // https://tc39.es/ecma262/#sec-object.create
+
+  var objectCreate = Object.create || function create(O, Properties) {
+    var result;
+
+    if (O !== null) {
+      EmptyConstructor[PROTOTYPE] = anObject(O);
+      result = new EmptyConstructor();
+      EmptyConstructor[PROTOTYPE] = null; // add "__proto__" for Object.getPrototypeOf polyfill
+
+      result[IE_PROTO] = O;
+    } else result = NullProtoObject();
+
+    return Properties === undefined ? result : objectDefineProperties(result, Properties);
   };
 
   var $RegExp$1 = global_1.RegExp;
@@ -1647,7 +1668,7 @@ var MarkerClusterer = (function () {
   var createMethod = function (CONVERT_TO_STRING) {
     return function ($this, pos) {
       var S = toString_1(requireObjectCoercible($this));
-      var position = toInteger(pos);
+      var position = toIntegerOrInfinity(pos);
       var size = S.length;
       var first, second;
       if (position < 0 || position >= size) return CONVERT_TO_STRING ? '' : undefined;
@@ -1975,7 +1996,7 @@ var MarkerClusterer = (function () {
       for (var i = 0; i < results.length; i++) {
         result = results[i];
         var matched = toString_1(result[0]);
-        var position = max(min(toInteger(result.index), S.length), 0);
+        var position = max(min(toIntegerOrInfinity(result.index), S.length), 0);
         var captures = []; // NOTE: This is equivalent to
         //   captures = result.slice(1).map(maybeToString)
         // but for some reason `nativeSlice.call(result, 1, result.length)` (called in
