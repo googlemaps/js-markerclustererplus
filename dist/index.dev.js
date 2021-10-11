@@ -3424,14 +3424,7 @@ var MarkerClusterer = (function () {
       // See Comments 9 & 11 on Issue 3651 relating to this workaround for a Google Maps bug:
 
 
-      var mapBounds;
-
-      if (this.getMap().getZoom() > 3) {
-        mapBounds = new google.maps.LatLngBounds(this.getMap().getBounds().getSouthWest(), this.getMap().getBounds().getNorthEast());
-      } else {
-        mapBounds = new google.maps.LatLngBounds(new google.maps.LatLng(85.02070771743472, -178.48388434375), new google.maps.LatLng(-85.08136444384544, 178.00048865625));
-      }
-
+      var mapBounds = new google.maps.LatLngBounds(this.getMap().getBounds().getSouthWest(), this.getMap().getBounds().getNorthEast());
       var bounds = this.getExtendedBounds(mapBounds);
       var iLast = Math.min(iFirst + this.batchSize_, this.markers_.length);
 
