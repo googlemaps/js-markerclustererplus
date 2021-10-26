@@ -36,10 +36,22 @@ var MarkerClusterer = (function () {
     return this;
   }() || Function('return this')();
 
+  var FunctionPrototype$2 = Function.prototype;
+  var bind$1 = FunctionPrototype$2.bind;
+  var call$2 = FunctionPrototype$2.call;
+  var callBind = bind$1 && bind$1.bind(call$2);
+  var functionUncurryThis = bind$1 ? function (fn) {
+    return fn && callBind(call$2, fn);
+  } : function (fn) {
+    return fn && function () {
+      return call$2.apply(fn, arguments);
+    };
+  };
+
   // `IsCallable` abstract operation
   // https://tc39.es/ecma262/#sec-iscallable
   var isCallable = function (argument) {
-    return typeof argument === 'function';
+    return typeof argument == 'function';
   };
 
   var replacement = /#|\.prototype\./;
@@ -58,28 +70,30 @@ var MarkerClusterer = (function () {
   var POLYFILL = isForced.POLYFILL = 'P';
   var isForced_1 = isForced;
 
-  // `RequireObjectCoercible` abstract operation
+  var TypeError$c = global_1.TypeError; // `RequireObjectCoercible` abstract operation
   // https://tc39.es/ecma262/#sec-requireobjectcoercible
+
   var requireObjectCoercible = function (it) {
-    if (it == undefined) throw TypeError("Can't call method on " + it);
+    if (it == undefined) throw TypeError$c("Can't call method on " + it);
     return it;
   };
 
+  var Object$4 = global_1.Object; // `ToObject` abstract operation
   // https://tc39.es/ecma262/#sec-toobject
 
   var toObject = function (argument) {
-    return Object(requireObjectCoercible(argument));
+    return Object$4(requireObjectCoercible(argument));
   };
 
-  var hasOwnProperty = {}.hasOwnProperty; // `HasOwnProperty` abstract operation
+  var hasOwnProperty = functionUncurryThis({}.hasOwnProperty); // `HasOwnProperty` abstract operation
   // https://tc39.es/ecma262/#sec-hasownproperty
 
   var hasOwnProperty_1 = Object.hasOwn || function hasOwn(it, key) {
-    return hasOwnProperty.call(toObject(it), key);
+    return hasOwnProperty(toObject(it), key);
   };
 
   var isObject = function (it) {
-    return typeof it === 'object' ? it !== null : isCallable(it);
+    return typeof it == 'object' ? it !== null : isCallable(it);
   };
 
   var document$1 = global_1.document; // typeof document.createElement is 'object' in old IE
@@ -99,9 +113,17 @@ var MarkerClusterer = (function () {
     }).a != 7;
   });
 
+  var String$4 = global_1.String;
+  var TypeError$b = global_1.TypeError; // `Assert: Type(argument) is Object`
+
   var anObject = function (argument) {
     if (isObject(argument)) return argument;
-    throw TypeError(String(argument) + ' is not an object');
+    throw TypeError$b(String$4(argument) + ' is not an object');
+  };
+
+  var call$1 = Function.prototype.call;
+  var functionCall = call$1.bind ? call$1.bind(call$1) : function () {
+    return call$1.apply(call$1, arguments);
   };
 
   var aFunction = function (argument) {
@@ -112,6 +134,8 @@ var MarkerClusterer = (function () {
     return arguments.length < 2 ? aFunction(global_1[namespace]) : global_1[namespace] && global_1[namespace][method];
   };
 
+  var objectIsPrototypeOf = functionUncurryThis({}.isPrototypeOf);
+
   var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
 
   var process = global_1.process;
@@ -121,18 +145,24 @@ var MarkerClusterer = (function () {
   var match, version;
 
   if (v8) {
-    match = v8.split('.');
-    version = match[0] < 4 ? 1 : match[0] + match[1];
-  } else if (engineUserAgent) {
+    match = v8.split('.'); // in old Chrome, versions of V8 isn't V8 = Chrome / 10
+    // but their correct versions are not interesting for us
+
+    version = match[0] > 0 && match[0] < 4 ? 1 : +(match[0] + match[1]);
+  } // BrowserFS NodeJS `process` polyfill incorrectly set `.v8` to `0.0`
+  // so check `userAgent` even if `.v8` exists, but 0
+
+
+  if (!version && engineUserAgent) {
     match = engineUserAgent.match(/Edge\/(\d+)/);
 
     if (!match || match[1] >= 74) {
       match = engineUserAgent.match(/Chrome\/(\d+)/);
-      if (match) version = match[1];
+      if (match) version = +match[1];
     }
   }
 
-  var engineV8Version = version && +version;
+  var engineV8Version = version;
 
   /* eslint-disable es/no-symbol -- required for testing */
   // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
@@ -149,24 +179,29 @@ var MarkerClusterer = (function () {
 
   var useSymbolAsUid = nativeSymbol && !Symbol.sham && typeof Symbol.iterator == 'symbol';
 
+  var Object$3 = global_1.Object;
   var isSymbol = useSymbolAsUid ? function (it) {
     return typeof it == 'symbol';
   } : function (it) {
     var $Symbol = getBuiltIn('Symbol');
-    return isCallable($Symbol) && Object(it) instanceof $Symbol;
+    return isCallable($Symbol) && objectIsPrototypeOf($Symbol.prototype, Object$3(it));
   };
+
+  var String$3 = global_1.String;
 
   var tryToString = function (argument) {
     try {
-      return String(argument);
+      return String$3(argument);
     } catch (error) {
       return 'Object';
     }
   };
 
+  var TypeError$a = global_1.TypeError; // `Assert: IsCallable(argument) is true`
+
   var aCallable = function (argument) {
     if (isCallable(argument)) return argument;
-    throw TypeError(tryToString(argument) + ' is not a function');
+    throw TypeError$a(tryToString(argument) + ' is not a function');
   };
 
   // https://tc39.es/ecma262/#sec-getmethod
@@ -176,20 +211,22 @@ var MarkerClusterer = (function () {
     return func == null ? undefined : aCallable(func);
   };
 
+  var TypeError$9 = global_1.TypeError; // `OrdinaryToPrimitive` abstract operation
   // https://tc39.es/ecma262/#sec-ordinarytoprimitive
 
   var ordinaryToPrimitive = function (input, pref) {
     var fn, val;
-    if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = fn.call(input))) return val;
-    if (isCallable(fn = input.valueOf) && !isObject(val = fn.call(input))) return val;
-    if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = fn.call(input))) return val;
-    throw TypeError("Can't convert object to primitive value");
+    if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = functionCall(fn, input))) return val;
+    if (isCallable(fn = input.valueOf) && !isObject(val = functionCall(fn, input))) return val;
+    if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = functionCall(fn, input))) return val;
+    throw TypeError$9("Can't convert object to primitive value");
   };
+
+  var defineProperty$1 = Object.defineProperty;
 
   var setGlobal = function (key, value) {
     try {
-      // eslint-disable-next-line es/no-object-defineproperty -- safe
-      Object.defineProperty(global_1, key, {
+      defineProperty$1(global_1, key, {
         value: value,
         configurable: true,
         writable: true
@@ -209,7 +246,7 @@ var MarkerClusterer = (function () {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.18.3',
+      version: '3.19.0',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -217,27 +254,34 @@ var MarkerClusterer = (function () {
 
   var id = 0;
   var postfix = Math.random();
+  var toString$1 = functionUncurryThis(1.0.toString);
 
   var uid = function (key) {
-    return 'Symbol(' + String(key === undefined ? '' : key) + ')_' + (++id + postfix).toString(36);
+    return 'Symbol(' + (key === undefined ? '' : key) + ')_' + toString$1(++id + postfix, 36);
   };
 
   var WellKnownSymbolsStore = shared('wks');
   var Symbol$1 = global_1.Symbol;
+  var symbolFor = Symbol$1 && Symbol$1['for'];
   var createWellKnownSymbol = useSymbolAsUid ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid;
 
   var wellKnownSymbol = function (name) {
     if (!hasOwnProperty_1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
+      var description = 'Symbol.' + name;
+
       if (nativeSymbol && hasOwnProperty_1(Symbol$1, name)) {
         WellKnownSymbolsStore[name] = Symbol$1[name];
+      } else if (useSymbolAsUid && symbolFor) {
+        WellKnownSymbolsStore[name] = symbolFor(description);
       } else {
-        WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+        WellKnownSymbolsStore[name] = createWellKnownSymbol(description);
       }
     }
 
     return WellKnownSymbolsStore[name];
   };
 
+  var TypeError$8 = global_1.TypeError;
   var TO_PRIMITIVE = wellKnownSymbol('toPrimitive'); // `ToPrimitive` abstract operation
   // https://tc39.es/ecma262/#sec-toprimitive
 
@@ -248,9 +292,9 @@ var MarkerClusterer = (function () {
 
     if (exoticToPrim) {
       if (pref === undefined) pref = 'default';
-      result = exoticToPrim.call(input, pref);
+      result = functionCall(exoticToPrim, input, pref);
       if (!isObject(result) || isSymbol(result)) return result;
-      throw TypeError("Can't convert object to primitive value");
+      throw TypeError$8("Can't convert object to primitive value");
     }
 
     if (pref === undefined) pref = 'number';
@@ -261,8 +305,10 @@ var MarkerClusterer = (function () {
 
   var toPropertyKey = function (argument) {
     var key = toPrimitive(argument, 'string');
-    return isSymbol(key) ? key : String(key);
+    return isSymbol(key) ? key : key + '';
   };
+
+  var TypeError$7 = global_1.TypeError; // eslint-disable-next-line es/no-object-defineproperty -- safe
 
   var $defineProperty = Object.defineProperty; // `Object.defineProperty` method
   // https://tc39.es/ecma262/#sec-object.defineproperty
@@ -276,7 +322,7 @@ var MarkerClusterer = (function () {
     } catch (error) {
       /* empty */
     }
-    if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
+    if ('get' in Attributes || 'set' in Attributes) throw TypeError$7('Accessors not supported');
     if ('value' in Attributes) O[P] = Attributes.value;
     return O;
   };
@@ -300,11 +346,11 @@ var MarkerClusterer = (function () {
     return object;
   };
 
-  var functionToString = Function.toString; // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
+  var functionToString = functionUncurryThis(Function.toString); // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 
   if (!isCallable(sharedStore.inspectSource)) {
     sharedStore.inspectSource = function (it) {
-      return functionToString.call(it);
+      return functionToString(it);
     };
   }
 
@@ -322,6 +368,7 @@ var MarkerClusterer = (function () {
   var hiddenKeys$1 = {};
 
   var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
+  var TypeError$6 = global_1.TypeError;
   var WeakMap = global_1.WeakMap;
   var set, get, has;
 
@@ -334,7 +381,7 @@ var MarkerClusterer = (function () {
       var state;
 
       if (!isObject(it) || (state = get(it)).type !== TYPE) {
-        throw TypeError('Incompatible receiver, ' + TYPE + ' required');
+        throw TypeError$6('Incompatible receiver, ' + TYPE + ' required');
       }
 
       return state;
@@ -343,30 +390,30 @@ var MarkerClusterer = (function () {
 
   if (nativeWeakMap || sharedStore.state) {
     var store = sharedStore.state || (sharedStore.state = new WeakMap());
-    var wmget = store.get;
-    var wmhas = store.has;
-    var wmset = store.set;
+    var wmget = functionUncurryThis(store.get);
+    var wmhas = functionUncurryThis(store.has);
+    var wmset = functionUncurryThis(store.set);
 
     set = function (it, metadata) {
-      if (wmhas.call(store, it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+      if (wmhas(store, it)) throw new TypeError$6(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
-      wmset.call(store, it, metadata);
+      wmset(store, it, metadata);
       return metadata;
     };
 
     get = function (it) {
-      return wmget.call(store, it) || {};
+      return wmget(store, it) || {};
     };
 
     has = function (it) {
-      return wmhas.call(store, it);
+      return wmhas(store, it);
     };
   } else {
     var STATE = sharedKey('state');
     hiddenKeys$1[STATE] = true;
 
     set = function (it, metadata) {
-      if (hasOwnProperty_1(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+      if (hasOwnProperty_1(it, STATE)) throw new TypeError$6(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       createNonEnumerableProperty(it, STATE, metadata);
       return metadata;
@@ -389,16 +436,16 @@ var MarkerClusterer = (function () {
     getterFor: getterFor
   };
 
-  var FunctionPrototype = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+  var FunctionPrototype$1 = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
   var getDescriptor = descriptors && Object.getOwnPropertyDescriptor;
-  var EXISTS = hasOwnProperty_1(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
+  var EXISTS = hasOwnProperty_1(FunctionPrototype$1, 'name'); // additional protection from minified / mangled / dropped function names
 
   var PROPER = EXISTS && function something() {
     /* empty */
   }.name === 'something';
 
-  var CONFIGURABLE = EXISTS && (!descriptors || descriptors && getDescriptor(FunctionPrototype, 'name').configurable);
+  var CONFIGURABLE = EXISTS && (!descriptors || descriptors && getDescriptor(FunctionPrototype$1, 'name').configurable);
   var functionName = {
     EXISTS: EXISTS,
     PROPER: PROPER,
@@ -448,9 +495,12 @@ var MarkerClusterer = (function () {
     });
   });
 
+  var String$2 = global_1.String;
+  var TypeError$5 = global_1.TypeError;
+
   var aPossiblePrototype = function (argument) {
-    if (typeof argument === 'object' || isCallable(argument)) return argument;
-    throw TypeError("Can't set " + String(argument) + ' as a prototype');
+    if (typeof argument == 'object' || isCallable(argument)) return argument;
+    throw TypeError$5("Can't set " + String$2(argument) + ' as a prototype');
   };
 
   /* eslint-disable no-proto -- safe */
@@ -466,8 +516,8 @@ var MarkerClusterer = (function () {
 
     try {
       // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-      setter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
-      setter.call(test, []);
+      setter = functionUncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
+      setter(test, []);
       CORRECT_SETTER = test instanceof Array;
     } catch (error) {
       /* empty */
@@ -476,7 +526,7 @@ var MarkerClusterer = (function () {
     return function setPrototypeOf(O, proto) {
       anObject(O);
       aPossiblePrototype(proto);
-      if (CORRECT_SETTER) setter.call(O, proto);else O.__proto__ = proto;
+      if (CORRECT_SETTER) setter(O, proto);else O.__proto__ = proto;
       return O;
     };
   }() : undefined);
@@ -489,21 +539,23 @@ var MarkerClusterer = (function () {
     return $this;
   };
 
-  var toString = {}.toString;
+  var toString = functionUncurryThis({}.toString);
+  var stringSlice$5 = functionUncurryThis(''.slice);
 
   var classofRaw = function (it) {
-    return toString.call(it).slice(8, -1);
+    return stringSlice$5(toString(it), 8, -1);
   };
 
-  var split = ''.split; // fallback for non-array-like ES3 and non-enumerable old V8 strings
+  var Object$2 = global_1.Object;
+  var split = functionUncurryThis(''.split); // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
   var indexedObject = fails(function () {
     // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
     // eslint-disable-next-line no-prototype-builtins -- safe
-    return !Object('z').propertyIsEnumerable(0);
+    return !Object$2('z').propertyIsEnumerable(0);
   }) ? function (it) {
-    return classofRaw(it) == 'String' ? split.call(it, '') : Object(it);
-  } : Object;
+    return classofRaw(it) == 'String' ? split(it, '') : Object$2(it);
+  } : Object$2;
 
   var toIndexedObject = function (it) {
     return indexedObject(requireObjectCoercible(it));
@@ -570,7 +622,8 @@ var MarkerClusterer = (function () {
     indexOf: createMethod$2(false)
   };
 
-  var indexOf = arrayIncludes.indexOf;
+  var indexOf$1 = arrayIncludes.indexOf;
+  var push$2 = functionUncurryThis([].push);
 
   var objectKeysInternal = function (object, names) {
     var O = toIndexedObject(object);
@@ -578,11 +631,11 @@ var MarkerClusterer = (function () {
     var result = [];
     var key;
 
-    for (key in O) !hasOwnProperty_1(hiddenKeys$1, key) && hasOwnProperty_1(O, key) && result.push(key); // Don't enum bug & hidden keys
+    for (key in O) !hasOwnProperty_1(hiddenKeys$1, key) && hasOwnProperty_1(O, key) && push$2(result, key); // Don't enum bug & hidden keys
 
 
     while (names.length > i) if (hasOwnProperty_1(O, key = names[i++])) {
-      ~indexOf(result, key) || result.push(key);
+      ~indexOf$1(result, key) || push$2(result, key);
     }
 
     return result;
@@ -631,25 +684,23 @@ var MarkerClusterer = (function () {
     } catch (error) {
       /* empty */
     }
-    if (hasOwnProperty_1(O, P)) return createPropertyDescriptor(!objectPropertyIsEnumerable.f.call(O, P), O[P]);
+    if (hasOwnProperty_1(O, P)) return createPropertyDescriptor(!functionCall(objectPropertyIsEnumerable.f, O, P), O[P]);
   };
   var objectGetOwnPropertyDescriptor = {
     f: f$1
   };
 
-  var valueOf = 1.0.valueOf; // `thisNumberValue` abstract operation
   // https://tc39.es/ecma262/#sec-thisnumbervalue
 
-  var thisNumberValue = function (value) {
-    return valueOf.call(value);
-  };
+  var thisNumberValue = functionUncurryThis(1.0.valueOf);
 
   var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag');
   var test = {};
   test[TO_STRING_TAG$1] = 'z';
   var toStringTagSupport = String(test) === '[object z]';
 
-  var TO_STRING_TAG = wellKnownSymbol('toStringTag'); // ES3 wrong here
+  var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+  var Object$1 = global_1.Object; // ES3 wrong here
 
   var CORRECT_ARGUMENTS = classofRaw(function () {
     return arguments;
@@ -667,19 +718,22 @@ var MarkerClusterer = (function () {
   var classof = toStringTagSupport ? classofRaw : function (it) {
     var O, tag, result;
     return it === undefined ? 'Undefined' : it === null ? 'Null' // @@toStringTag case
-    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG)) == 'string' ? tag // builtinTag case
+    : typeof (tag = tryGet(O = Object$1(it), TO_STRING_TAG)) == 'string' ? tag // builtinTag case
     : CORRECT_ARGUMENTS ? classofRaw(O) // ES3 arguments fallback
     : (result = classofRaw(O)) == 'Object' && isCallable(O.callee) ? 'Arguments' : result;
   };
 
+  var String$1 = global_1.String;
+
   var toString_1 = function (argument) {
     if (classof(argument) === 'Symbol') throw TypeError('Cannot convert a Symbol value to a string');
-    return String(argument);
+    return String$1(argument);
   };
 
   // a string of all valid unicode whitespaces
   var whitespaces = '\u0009\u000A\u000B\u000C\u000D\u0020\u00A0\u1680\u2000\u2001\u2002' + '\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
 
+  var replace$2 = functionUncurryThis(''.replace);
   var whitespace = '[' + whitespaces + ']';
   var ltrim = RegExp('^' + whitespace + whitespace + '*');
   var rtrim = RegExp(whitespace + whitespace + '*$'); // `String.prototype.{ trim, trimStart, trimEnd, trimLeft, trimRight }` methods implementation
@@ -687,8 +741,8 @@ var MarkerClusterer = (function () {
   var createMethod$1 = function (TYPE) {
     return function ($this) {
       var string = toString_1(requireObjectCoercible($this));
-      if (TYPE & 1) string = string.replace(ltrim, '');
-      if (TYPE & 2) string = string.replace(rtrim, '');
+      if (TYPE & 1) string = replace$2(string, ltrim, '');
+      if (TYPE & 2) string = replace$2(string, rtrim, '');
       return string;
     };
   };
@@ -711,12 +765,15 @@ var MarkerClusterer = (function () {
   var trim = stringTrim.trim;
   var NUMBER = 'Number';
   var NativeNumber = global_1[NUMBER];
-  var NumberPrototype = NativeNumber.prototype; // `ToNumeric` abstract operation
+  var NumberPrototype = NativeNumber.prototype;
+  var TypeError$4 = global_1.TypeError;
+  var arraySlice$1 = functionUncurryThis(''.slice);
+  var charCodeAt$1 = functionUncurryThis(''.charCodeAt); // `ToNumeric` abstract operation
   // https://tc39.es/ecma262/#sec-tonumeric
 
   var toNumeric = function (value) {
     var primValue = toPrimitive(value, 'number');
-    return typeof primValue === 'bigint' ? primValue : toNumber(primValue);
+    return typeof primValue == 'bigint' ? primValue : toNumber(primValue);
   }; // `ToNumber` abstract operation
   // https://tc39.es/ecma262/#sec-tonumber
 
@@ -724,17 +781,17 @@ var MarkerClusterer = (function () {
   var toNumber = function (argument) {
     var it = toPrimitive(argument, 'number');
     var first, third, radix, maxCode, digits, length, index, code;
-    if (isSymbol(it)) throw TypeError('Cannot convert a Symbol value to a number');
+    if (isSymbol(it)) throw TypeError$4('Cannot convert a Symbol value to a number');
 
     if (typeof it == 'string' && it.length > 2) {
       it = trim(it);
-      first = it.charCodeAt(0);
+      first = charCodeAt$1(it, 0);
 
       if (first === 43 || first === 45) {
-        third = it.charCodeAt(2);
+        third = charCodeAt$1(it, 2);
         if (third === 88 || third === 120) return NaN; // Number('+0x1') should be NaN, old V8 fix
       } else if (first === 48) {
-        switch (it.charCodeAt(1)) {
+        switch (charCodeAt$1(it, 1)) {
           case 66:
           case 98:
             radix = 2;
@@ -753,11 +810,11 @@ var MarkerClusterer = (function () {
             return +it;
         }
 
-        digits = it.slice(2);
+        digits = arraySlice$1(it, 2);
         length = digits.length;
 
         for (index = 0; index < length; index++) {
-          code = digits.charCodeAt(index); // parseInt parses a string to a first unavailable symbol
+          code = charCodeAt$1(digits, index); // parseInt parses a string to a first unavailable symbol
           // but ToNumber should return NaN if a string contains unavailable symbols
 
           if (code < 48 || code > maxCode) return NaN;
@@ -777,7 +834,7 @@ var MarkerClusterer = (function () {
       var n = arguments.length < 1 ? 0 : NativeNumber(toNumeric(value));
       var dummy = this; // check on 1..constructor(foo) case
 
-      return dummy instanceof NumberWrapper && fails(function () {
+      return objectIsPrototypeOf(NumberPrototype, dummy) && fails(function () {
         thisNumberValue(dummy);
       }) ? inheritIfRequired(Object(n), dummy, NumberWrapper) : n;
     };
@@ -802,10 +859,12 @@ var MarkerClusterer = (function () {
     f: f
   };
 
+  var concat$1 = functionUncurryThis([].concat); // all object keys, includes non-enumerable and symbols
+
   var ownKeys = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
     var keys = objectGetOwnPropertyNames.f(anObject(it));
     var getOwnPropertySymbols = objectGetOwnPropertySymbols.f;
-    return getOwnPropertySymbols ? keys.concat(getOwnPropertySymbols(it)) : keys;
+    return getOwnPropertySymbols ? concat$1(keys, getOwnPropertySymbols(it)) : keys;
   };
 
   var copyConstructorProperties = function (target, source) {
@@ -861,7 +920,7 @@ var MarkerClusterer = (function () {
       FORCED = isForced_1(GLOBAL ? key : TARGET + (STATIC ? '.' : '#') + key, options.forced); // contained in target
 
       if (!FORCED && targetProperty !== undefined) {
-        if (typeof sourceProperty === typeof targetProperty) continue;
+        if (typeof sourceProperty == typeof targetProperty) continue;
         copyConstructorProperties(sourceProperty, targetProperty);
       } // add a flag to not completely full polyfills
 
@@ -882,19 +941,21 @@ var MarkerClusterer = (function () {
     return classofRaw(argument) == 'Array';
   };
 
+  var noop = function () {
+    /* empty */
+  };
+
   var empty = [];
   var construct = getBuiltIn('Reflect', 'construct');
   var constructorRegExp = /^\s*(?:class|function)\b/;
-  var exec = constructorRegExp.exec;
-  var INCORRECT_TO_STRING = !constructorRegExp.exec(function () {
-    /* empty */
-  });
+  var exec$1 = functionUncurryThis(constructorRegExp.exec);
+  var INCORRECT_TO_STRING = !constructorRegExp.exec(noop);
 
   var isConstructorModern = function (argument) {
     if (!isCallable(argument)) return false;
 
     try {
-      construct(Object, empty, argument);
+      construct(noop, empty, argument);
       return true;
     } catch (error) {
       return false;
@@ -912,7 +973,7 @@ var MarkerClusterer = (function () {
       // we can't check .prototype since constructors produced by .bind haven't it
     }
 
-    return INCORRECT_TO_STRING || !!exec.call(constructorRegExp, inspectSource(argument));
+    return INCORRECT_TO_STRING || !!exec$1(constructorRegExp, inspectSource(argument));
   }; // `IsConstructor` abstract operation
   // https://tc39.es/ecma262/#sec-isconstructor
 
@@ -924,7 +985,8 @@ var MarkerClusterer = (function () {
     }) || called;
   }) ? isConstructorLegacy : isConstructorModern;
 
-  var SPECIES$4 = wellKnownSymbol('species'); // a part of `ArraySpeciesCreate` abstract operation
+  var SPECIES$4 = wellKnownSymbol('species');
+  var Array$2 = global_1.Array; // a part of `ArraySpeciesCreate` abstract operation
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
 
   var arraySpeciesConstructor = function (originalArray) {
@@ -933,13 +995,13 @@ var MarkerClusterer = (function () {
     if (isArray(originalArray)) {
       C = originalArray.constructor; // cross-realm fallback
 
-      if (isConstructor(C) && (C === Array || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
+      if (isConstructor(C) && (C === Array$2 || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
         C = C[SPECIES$4];
         if (C === null) C = undefined;
       }
     }
 
-    return C === undefined ? Array : C;
+    return C === undefined ? Array$2 : C;
   };
 
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
@@ -974,6 +1036,7 @@ var MarkerClusterer = (function () {
   };
 
   var HAS_SPECIES_SUPPORT$1 = arrayMethodHasSpeciesSupport('splice');
+  var TypeError$3 = global_1.TypeError;
   var max$2 = Math.max;
   var min$2 = Math.min;
   var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
@@ -1006,7 +1069,7 @@ var MarkerClusterer = (function () {
       }
 
       if (len + insertCount - actualDeleteCount > MAX_SAFE_INTEGER) {
-        throw TypeError(MAXIMUM_ALLOWED_LENGTH_EXCEEDED);
+        throw TypeError$3(MAXIMUM_ALLOWED_LENGTH_EXCEEDED);
       }
 
       A = arraySpeciesCreate(O, actualDeleteCount);
@@ -1043,9 +1106,11 @@ var MarkerClusterer = (function () {
     }
   });
 
+  var arraySlice = functionUncurryThis([].slice);
+
   var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('slice');
   var SPECIES$2 = wellKnownSymbol('species');
-  var nativeSlice = [].slice;
+  var Array$1 = global_1.Array;
   var max$1 = Math.max; // `Array.prototype.slice` method
   // https://tc39.es/ecma262/#sec-array.prototype.slice
   // fallback for not array-like ES3 strings and DOM objects
@@ -1066,19 +1131,19 @@ var MarkerClusterer = (function () {
       if (isArray(O)) {
         Constructor = O.constructor; // cross-realm fallback
 
-        if (isConstructor(Constructor) && (Constructor === Array || isArray(Constructor.prototype))) {
+        if (isConstructor(Constructor) && (Constructor === Array$1 || isArray(Constructor.prototype))) {
           Constructor = undefined;
         } else if (isObject(Constructor)) {
           Constructor = Constructor[SPECIES$2];
           if (Constructor === null) Constructor = undefined;
         }
 
-        if (Constructor === Array || Constructor === undefined) {
-          return nativeSlice.call(O, k, fin);
+        if (Constructor === Array$1 || Constructor === undefined) {
+          return arraySlice(O, k, fin);
         }
       }
 
-      result = new (Constructor === undefined ? Array : Constructor)(max$1(fin - k, 0));
+      result = new (Constructor === undefined ? Array$1 : Constructor)(max$1(fin - k, 0));
 
       for (n = 0; k < fin; k++, n++) if (k in O) createProperty(result, n, O[k]);
 
@@ -1120,15 +1185,16 @@ var MarkerClusterer = (function () {
   var PROPER_FUNCTION_NAME = functionName.PROPER;
   var TO_STRING = 'toString';
   var RegExpPrototype$1 = RegExp.prototype;
-  var nativeToString = RegExpPrototype$1[TO_STRING];
+  var n$ToString = RegExpPrototype$1[TO_STRING];
+  var getFlags = functionUncurryThis(regexpFlags);
   var NOT_GENERIC = fails(function () {
-    return nativeToString.call({
+    return n$ToString.call({
       source: 'a',
       flags: 'b'
     }) != '/a/b';
   }); // FF44- RegExp#toString has a wrong name
 
-  var INCORRECT_NAME = PROPER_FUNCTION_NAME && nativeToString.name != TO_STRING; // `RegExp.prototype.toString` method
+  var INCORRECT_NAME = PROPER_FUNCTION_NAME && n$ToString.name != TO_STRING; // `RegExp.prototype.toString` method
   // https://tc39.es/ecma262/#sec-regexp.prototype.tostring
 
   if (NOT_GENERIC || INCORRECT_NAME) {
@@ -1136,7 +1202,7 @@ var MarkerClusterer = (function () {
       var R = anObject(this);
       var p = toString_1(R.source);
       var rf = R.flags;
-      var f = toString_1(rf === undefined && R instanceof RegExp && !('flags' in RegExpPrototype$1) ? regexpFlags.call(R) : rf);
+      var f = toString_1(rf === undefined && objectIsPrototypeOf(RegExpPrototype$1, R) && !('flags' in RegExpPrototype$1) ? getFlags(R) : rf);
       return '/' + p + '/' + f;
     }, {
       unsafe: true
@@ -1195,7 +1261,7 @@ var MarkerClusterer = (function () {
     });
   };
 
-  var nativeJoin = [].join;
+  var un$Join = functionUncurryThis([].join);
   var ES3_STRINGS = indexedObject != Object;
   var STRICT_METHOD = arrayMethodIsStrict('join', ','); // `Array.prototype.join` method
   // https://tc39.es/ecma262/#sec-array.prototype.join
@@ -1206,7 +1272,7 @@ var MarkerClusterer = (function () {
     forced: ES3_STRINGS || !STRICT_METHOD
   }, {
     join: function join(separator) {
-      return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
+      return un$Join(toIndexedObject(this), separator === undefined ? ',' : separator);
     }
   });
 
@@ -1254,12 +1320,13 @@ var MarkerClusterer = (function () {
 
   var objectDefineProperties = descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
     anObject(O);
+    var props = toIndexedObject(Properties);
     var keys = objectKeys(Properties);
     var length = keys.length;
     var index = 0;
     var key;
 
-    while (length > index) objectDefineProperty.f(O, key = keys[index++], Properties[key]);
+    while (length > index) objectDefineProperty.f(O, key = keys[index++], props[key]);
 
     return O;
   };
@@ -1368,15 +1435,19 @@ var MarkerClusterer = (function () {
 
 
   var getInternalState = internalState.get;
-  var nativeExec = RegExp.prototype.exec;
   var nativeReplace = shared('native-string-replace', String.prototype.replace);
+  var nativeExec = RegExp.prototype.exec;
   var patchedExec = nativeExec;
+  var charAt$3 = functionUncurryThis(''.charAt);
+  var indexOf = functionUncurryThis(''.indexOf);
+  var replace$1 = functionUncurryThis(''.replace);
+  var stringSlice$4 = functionUncurryThis(''.slice);
 
   var UPDATES_LAST_INDEX_WRONG = function () {
     var re1 = /a/;
     var re2 = /b*/g;
-    nativeExec.call(re1, 'a');
-    nativeExec.call(re2, 'a');
+    functionCall(nativeExec, re1, 'a');
+    functionCall(nativeExec, re2, 'a');
     return re1.lastIndex !== 0 || re2.lastIndex !== 0;
   }();
 
@@ -1396,28 +1467,28 @@ var MarkerClusterer = (function () {
 
       if (raw) {
         raw.lastIndex = re.lastIndex;
-        result = patchedExec.call(raw, str);
+        result = functionCall(patchedExec, raw, str);
         re.lastIndex = raw.lastIndex;
         return result;
       }
 
       var groups = state.groups;
       var sticky = UNSUPPORTED_Y$1 && re.sticky;
-      var flags = regexpFlags.call(re);
+      var flags = functionCall(regexpFlags, re);
       var source = re.source;
       var charsAdded = 0;
       var strCopy = str;
 
       if (sticky) {
-        flags = flags.replace('y', '');
+        flags = replace$1(flags, 'y', '');
 
-        if (flags.indexOf('g') === -1) {
+        if (indexOf(flags, 'g') === -1) {
           flags += 'g';
         }
 
-        strCopy = str.slice(re.lastIndex); // Support anchored sticky behavior.
+        strCopy = stringSlice$4(str, re.lastIndex); // Support anchored sticky behavior.
 
-        if (re.lastIndex > 0 && (!re.multiline || re.multiline && str.charAt(re.lastIndex - 1) !== '\n')) {
+        if (re.lastIndex > 0 && (!re.multiline || re.multiline && charAt$3(str, re.lastIndex - 1) !== '\n')) {
           source = '(?: ' + source + ')';
           strCopy = ' ' + strCopy;
           charsAdded++;
@@ -1433,12 +1504,12 @@ var MarkerClusterer = (function () {
       }
 
       if (UPDATES_LAST_INDEX_WRONG) lastIndex = re.lastIndex;
-      match = nativeExec.call(sticky ? reCopy : re, strCopy);
+      match = functionCall(nativeExec, sticky ? reCopy : re, strCopy);
 
       if (sticky) {
         if (match) {
-          match.input = match.input.slice(charsAdded);
-          match[0] = match[0].slice(charsAdded);
+          match.input = stringSlice$4(match.input, charsAdded);
+          match[0] = stringSlice$4(match[0], charsAdded);
           match.index = re.lastIndex;
           re.lastIndex += match[0].length;
         } else re.lastIndex = 0;
@@ -1449,7 +1520,7 @@ var MarkerClusterer = (function () {
       if (NPCG_INCLUDED && match && match.length > 1) {
         // Fix browsers whose `exec` methods don't consistently return `undefined`
         // for NPCG, like IE8. NOTE: This doesn' work for /(.?)?/
-        nativeReplace.call(match[0], reCopy, function () {
+        functionCall(nativeReplace, match[0], reCopy, function () {
           for (i = 1; i < arguments.length - 2; i++) {
             if (arguments[i] === undefined) match[i] = undefined;
           }
@@ -1480,6 +1551,15 @@ var MarkerClusterer = (function () {
     forced: /./.exec !== regexpExec
   }, {
     exec: regexpExec
+  });
+
+  var FunctionPrototype = Function.prototype;
+  var apply = FunctionPrototype.apply;
+  var bind = FunctionPrototype.bind;
+  var call = FunctionPrototype.call; // eslint-disable-next-line es/no-reflect -- safe
+
+  var functionApply = typeof Reflect == 'object' && Reflect.apply || (bind ? call.bind(apply) : function () {
+    return call.apply(apply, arguments);
   });
 
   var SPECIES$1 = wellKnownSymbol('species');
@@ -1529,8 +1609,9 @@ var MarkerClusterer = (function () {
     });
 
     if (!DELEGATES_TO_SYMBOL || !DELEGATES_TO_EXEC || FORCED) {
-      var nativeRegExpMethod = /./[SYMBOL];
+      var uncurriedNativeRegExpMethod = functionUncurryThis(/./[SYMBOL]);
       var methods = exec(SYMBOL, ''[KEY], function (nativeMethod, regexp, str, arg2, forceStringMethod) {
+        var uncurriedNativeMethod = functionUncurryThis(nativeMethod);
         var $exec = regexp.exec;
 
         if ($exec === regexpExec || $exec === RegExpPrototype.exec) {
@@ -1540,13 +1621,13 @@ var MarkerClusterer = (function () {
             // We avoid it by directly calling the native @@method method.
             return {
               done: true,
-              value: nativeRegExpMethod.call(regexp, str, arg2)
+              value: uncurriedNativeRegExpMethod(regexp, str, arg2)
             };
           }
 
           return {
             done: true,
-            value: nativeMethod.call(str, regexp, arg2)
+            value: uncurriedNativeMethod(str, regexp, arg2)
           };
         }
 
@@ -1569,9 +1650,11 @@ var MarkerClusterer = (function () {
     return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
   };
 
+  var TypeError$2 = global_1.TypeError; // `Assert: IsConstructor(argument) is true`
+
   var aConstructor = function (argument) {
     if (isConstructor(argument)) return argument;
-    throw TypeError(tryToString(argument) + ' is not a constructor');
+    throw TypeError$2(tryToString(argument) + ' is not a constructor');
   };
 
   var SPECIES = wellKnownSymbol('species'); // `SpeciesConstructor` abstract operation
@@ -1583,6 +1666,10 @@ var MarkerClusterer = (function () {
     return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? defaultConstructor : aConstructor(S);
   };
 
+  var charAt$2 = functionUncurryThis(''.charAt);
+  var charCodeAt = functionUncurryThis(''.charCodeAt);
+  var stringSlice$3 = functionUncurryThis(''.slice);
+
   var createMethod = function (CONVERT_TO_STRING) {
     return function ($this, pos) {
       var S = toString_1(requireObjectCoercible($this));
@@ -1590,8 +1677,8 @@ var MarkerClusterer = (function () {
       var size = S.length;
       var first, second;
       if (position < 0 || position >= size) return CONVERT_TO_STRING ? '' : undefined;
-      first = S.charCodeAt(position);
-      return first < 0xD800 || first > 0xDBFF || position + 1 === size || (second = S.charCodeAt(position + 1)) < 0xDC00 || second > 0xDFFF ? CONVERT_TO_STRING ? S.charAt(position) : first : CONVERT_TO_STRING ? S.slice(position, position + 2) : (first - 0xD800 << 10) + (second - 0xDC00) + 0x10000;
+      first = charCodeAt(S, position);
+      return first < 0xD800 || first > 0xDBFF || position + 1 === size || (second = charCodeAt(S, position + 1)) < 0xDC00 || second > 0xDFFF ? CONVERT_TO_STRING ? charAt$2(S, position) : first : CONVERT_TO_STRING ? stringSlice$3(S, position, position + 2) : (first - 0xD800 << 10) + (second - 0xDC00) + 0x10000;
     };
   };
 
@@ -1604,32 +1691,36 @@ var MarkerClusterer = (function () {
     charAt: createMethod(true)
   };
 
-  var charAt = stringMultibyte.charAt; // `AdvanceStringIndex` abstract operation
+  var charAt$1 = stringMultibyte.charAt; // `AdvanceStringIndex` abstract operation
   // https://tc39.es/ecma262/#sec-advancestringindex
 
   var advanceStringIndex = function (S, index, unicode) {
-    return index + (unicode ? charAt(S, index).length : 1);
+    return index + (unicode ? charAt$1(S, index).length : 1);
   };
 
+  var TypeError$1 = global_1.TypeError; // `RegExpExec` abstract operation
   // https://tc39.es/ecma262/#sec-regexpexec
 
   var regexpExecAbstract = function (R, S) {
     var exec = R.exec;
 
     if (isCallable(exec)) {
-      var result = exec.call(R, S);
+      var result = functionCall(exec, R, S);
       if (result !== null) anObject(result);
       return result;
     }
 
-    if (classofRaw(R) === 'RegExp') return regexpExec.call(R, S);
-    throw TypeError('RegExp#exec called on incompatible receiver');
+    if (classofRaw(R) === 'RegExp') return functionCall(regexpExec, R, S);
+    throw TypeError$1('RegExp#exec called on incompatible receiver');
   };
 
   var UNSUPPORTED_Y = regexpStickyHelpers.UNSUPPORTED_Y;
-  var arrayPush = [].push;
+  var MAX_UINT32 = 0xFFFFFFFF;
   var min$1 = Math.min;
-  var MAX_UINT32 = 0xFFFFFFFF; // Chrome 51 has a buggy "split" implementation when RegExp#exec !== nativeExec
+  var $push = [].push;
+  var exec = functionUncurryThis(/./.exec);
+  var push$1 = functionUncurryThis($push);
+  var stringSlice$2 = functionUncurryThis(''.slice); // Chrome 51 has a buggy "split" implementation when RegExp#exec !== nativeExec
   // Weex JS has frozen built-in prototypes, so use try / catch wrapper
 
   var SPLIT_WORKS_WITH_OVERWRITTEN_EXEC = !fails(function () {
@@ -1659,7 +1750,7 @@ var MarkerClusterer = (function () {
         if (separator === undefined) return [string]; // If `separator` is not a regex, use native split
 
         if (!isRegexp(separator)) {
-          return nativeSplit.call(string, separator, lim);
+          return functionCall(nativeSplit, string, separator, lim);
         }
 
         var output = [];
@@ -1669,12 +1760,12 @@ var MarkerClusterer = (function () {
         var separatorCopy = new RegExp(separator.source, flags + 'g');
         var match, lastIndex, lastLength;
 
-        while (match = regexpExec.call(separatorCopy, string)) {
+        while (match = functionCall(regexpExec, separatorCopy, string)) {
           lastIndex = separatorCopy.lastIndex;
 
           if (lastIndex > lastLastIndex) {
-            output.push(string.slice(lastLastIndex, match.index));
-            if (match.length > 1 && match.index < string.length) arrayPush.apply(output, match.slice(1));
+            push$1(output, stringSlice$2(string, lastLastIndex, match.index));
+            if (match.length > 1 && match.index < string.length) functionApply($push, output, arraySlice(match, 1));
             lastLength = match[0].length;
             lastLastIndex = lastIndex;
             if (output.length >= lim) break;
@@ -1684,15 +1775,15 @@ var MarkerClusterer = (function () {
         }
 
         if (lastLastIndex === string.length) {
-          if (lastLength || !separatorCopy.test('')) output.push('');
-        } else output.push(string.slice(lastLastIndex));
+          if (lastLength || !exec(separatorCopy, '')) push$1(output, '');
+        } else push$1(output, stringSlice$2(string, lastLastIndex));
 
-        return output.length > lim ? output.slice(0, lim) : output;
+        return output.length > lim ? arraySlice(output, 0, lim) : output;
       }; // Chakra, V8
 
     } else if ('0'.split(undefined, 0).length) {
       internalSplit = function (separator, limit) {
-        return separator === undefined && limit === 0 ? [] : nativeSplit.call(this, separator, limit);
+        return separator === undefined && limit === 0 ? [] : functionCall(nativeSplit, this, separator, limit);
       };
     } else internalSplit = nativeSplit;
 
@@ -1701,7 +1792,7 @@ var MarkerClusterer = (function () {
     function split(separator, limit) {
       var O = requireObjectCoercible(this);
       var splitter = separator == undefined ? undefined : getMethod(separator, SPLIT);
-      return splitter ? splitter.call(separator, O, limit) : internalSplit.call(toString_1(O), separator, limit);
+      return splitter ? functionCall(splitter, separator, O, limit) : functionCall(internalSplit, toString_1(O), separator, limit);
     }, // `RegExp.prototype[@@split]` method
     // https://tc39.es/ecma262/#sec-regexp.prototype-@@split
     //
@@ -1727,17 +1818,17 @@ var MarkerClusterer = (function () {
 
       while (q < S.length) {
         splitter.lastIndex = UNSUPPORTED_Y ? 0 : q;
-        var z = regexpExecAbstract(splitter, UNSUPPORTED_Y ? S.slice(q) : S);
+        var z = regexpExecAbstract(splitter, UNSUPPORTED_Y ? stringSlice$2(S, q) : S);
         var e;
 
         if (z === null || (e = min$1(toLength(splitter.lastIndex + (UNSUPPORTED_Y ? q : 0)), S.length)) === p) {
           q = advanceStringIndex(S, q, unicodeMatching);
         } else {
-          A.push(S.slice(p, q));
+          push$1(A, stringSlice$2(S, p, q));
           if (A.length === lim) return A;
 
           for (var i = 1; i <= z.length - 1; i++) {
-            A.push(z[i]);
+            push$1(A, z[i]);
             if (A.length === lim) return A;
           }
 
@@ -1745,13 +1836,15 @@ var MarkerClusterer = (function () {
         }
       }
 
-      A.push(S.slice(p));
+      push$1(A, stringSlice$2(S, p));
       return A;
     }];
   }, !SPLIT_WORKS_WITH_OVERWRITTEN_EXEC, UNSUPPORTED_Y);
 
   var floor = Math.floor;
-  var replace = ''.replace;
+  var charAt = functionUncurryThis(''.charAt);
+  var replace = functionUncurryThis(''.replace);
+  var stringSlice$1 = functionUncurryThis(''.slice);
   var SUBSTITUTION_SYMBOLS = /\$([$&'`]|\d{1,2}|<[^>]*>)/g;
   var SUBSTITUTION_SYMBOLS_NO_NAMED = /\$([$&'`]|\d{1,2})/g; // `GetSubstitution` abstract operation
   // https://tc39.es/ecma262/#sec-getsubstitution
@@ -1766,10 +1859,10 @@ var MarkerClusterer = (function () {
       symbols = SUBSTITUTION_SYMBOLS;
     }
 
-    return replace.call(replacement, symbols, function (match, ch) {
+    return replace(replacement, symbols, function (match, ch) {
       var capture;
 
-      switch (ch.charAt(0)) {
+      switch (charAt(ch, 0)) {
         case '$':
           return '$';
 
@@ -1777,13 +1870,13 @@ var MarkerClusterer = (function () {
           return matched;
 
         case '`':
-          return str.slice(0, position);
+          return stringSlice$1(str, 0, position);
 
         case "'":
-          return str.slice(tailPos);
+          return stringSlice$1(str, tailPos);
 
         case '<':
-          capture = namedCaptures[ch.slice(1, -1)];
+          capture = namedCaptures[stringSlice$1(ch, 1, -1)];
           break;
 
         default:
@@ -1794,7 +1887,7 @@ var MarkerClusterer = (function () {
           if (n > m) {
             var f = floor(n / 10);
             if (f === 0) return match;
-            if (f <= m) return captures[f - 1] === undefined ? ch.charAt(1) : captures[f - 1] + ch.charAt(1);
+            if (f <= m) return captures[f - 1] === undefined ? charAt(ch, 1) : captures[f - 1] + charAt(ch, 1);
             return match;
           }
 
@@ -1808,6 +1901,10 @@ var MarkerClusterer = (function () {
   var REPLACE = wellKnownSymbol('replace');
   var max = Math.max;
   var min = Math.min;
+  var concat = functionUncurryThis([].concat);
+  var push = functionUncurryThis([].push);
+  var stringIndexOf = functionUncurryThis(''.indexOf);
+  var stringSlice = functionUncurryThis(''.slice);
 
   var maybeToString = function (it) {
     return it === undefined ? it : String(it);
@@ -1851,14 +1948,14 @@ var MarkerClusterer = (function () {
     function replace(searchValue, replaceValue) {
       var O = requireObjectCoercible(this);
       var replacer = searchValue == undefined ? undefined : getMethod(searchValue, REPLACE);
-      return replacer ? replacer.call(searchValue, O, replaceValue) : nativeReplace.call(toString_1(O), searchValue, replaceValue);
+      return replacer ? functionCall(replacer, searchValue, O, replaceValue) : functionCall(nativeReplace, toString_1(O), searchValue, replaceValue);
     }, // `RegExp.prototype[@@replace]` method
     // https://tc39.es/ecma262/#sec-regexp.prototype-@@replace
     function (string, replaceValue) {
       var rx = anObject(this);
       var S = toString_1(string);
 
-      if (typeof replaceValue === 'string' && replaceValue.indexOf(UNSAFE_SUBSTITUTE) === -1 && replaceValue.indexOf('$<') === -1) {
+      if (typeof replaceValue == 'string' && stringIndexOf(replaceValue, UNSAFE_SUBSTITUTE) === -1 && stringIndexOf(replaceValue, '$<') === -1) {
         var res = maybeCallNative(nativeReplace, rx, S, replaceValue);
         if (res.done) return res.value;
       }
@@ -1877,7 +1974,7 @@ var MarkerClusterer = (function () {
       while (true) {
         var result = regexpExecAbstract(rx, S);
         if (result === null) break;
-        results.push(result);
+        push(results, result);
         if (!global) break;
         var matchStr = toString_1(result[0]);
         if (matchStr === '') rx.lastIndex = advanceStringIndex(S, toLength(rx.lastIndex), fullUnicode);
@@ -1896,25 +1993,25 @@ var MarkerClusterer = (function () {
         // the slice polyfill when slicing native arrays) "doesn't work" in safari 9 and
         // causes a crash (https://pastebin.com/N21QzeQA) when trying to debug it.
 
-        for (var j = 1; j < result.length; j++) captures.push(maybeToString(result[j]));
+        for (var j = 1; j < result.length; j++) push(captures, maybeToString(result[j]));
 
         var namedCaptures = result.groups;
 
         if (functionalReplace) {
-          var replacerArgs = [matched].concat(captures, position, S);
-          if (namedCaptures !== undefined) replacerArgs.push(namedCaptures);
-          var replacement = toString_1(replaceValue.apply(undefined, replacerArgs));
+          var replacerArgs = concat([matched], captures, position, S);
+          if (namedCaptures !== undefined) push(replacerArgs, namedCaptures);
+          var replacement = toString_1(functionApply(replaceValue, undefined, replacerArgs));
         } else {
           replacement = getSubstitution(matched, S, position, captures, namedCaptures, replaceValue);
         }
 
         if (position >= nextSourcePosition) {
-          accumulatedResult += S.slice(nextSourcePosition, position) + replacement;
+          accumulatedResult += stringSlice(S, nextSourcePosition, position) + replacement;
           nextSourcePosition = position + matched.length;
         }
       }
 
-      return accumulatedResult + S.slice(nextSourcePosition);
+      return accumulatedResult + stringSlice(S, nextSourcePosition);
     }];
   }, !REPLACE_SUPPORTS_NAMED_GROUPS || !REPLACE_KEEPS_$0 || REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE);
 
