@@ -64,5 +64,8 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://wombat-dressing-room.appspot.com"
-  }
+  },
+  "deprecations": [
+    { "version": "*", "message": "Please use @googlemaps/markerclusterer."}
+  ]
 }
