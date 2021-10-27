@@ -41,11 +41,6 @@ speedTest.init = function () {
 speedTest.showMarkers = function () {
   speedTest.markers = [];
 
-  let type = 1;
-  if ($("usegmm").checked) {
-    type = 0;
-  }
-
   if (speedTest.markerClusterer) {
     speedTest.markerClusterer.clearMarkers();
   }
