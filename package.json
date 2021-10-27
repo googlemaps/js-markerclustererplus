@@ -1,6 +1,6 @@
 {
   "name": "@googlemaps/markerclustererplus",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Creates and manages per-zoom-level clusters for large amounts of markers.",
   "keywords": [
     "cluster",
@@ -66,6 +66,9 @@
     "registry": "https://wombat-dressing-room.appspot.com"
   },
   "deprecations": [
-    { "version": "*", "message": "Please use @googlemaps/markerclusterer."}
+    {
+      "version": "*",
+      "message": "Please use @googlemaps/markerclusterer."
+    }
   ]
 }
