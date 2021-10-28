@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { MarkerClusterer, ClusterAugmentedMarker } from "./markerclusterer";
-import { ClusterIcon } from "./cluster-icon";
+import {MarkerClusterer, ClusterAugmentedMarker} from './markerclusterer';
+import {ClusterIcon} from './cluster-icon';
 
 /**
  * Creates a single cluster that manages a group of proximate markers.
@@ -125,9 +125,7 @@ export class Cluster {
    * @return True if the marker was added.
    * @ignore
    */
-  public addMarker(
-    marker: google.maps.Marker & { isAdded?: boolean }
-  ): boolean {
+  public addMarker(marker: google.maps.Marker & {isAdded?: boolean}): boolean {
     if (this.isMarkerAlreadyAdded_(marker)) {
       return false;
     }

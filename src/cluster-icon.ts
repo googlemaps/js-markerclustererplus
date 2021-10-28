@@ -19,22 +19,22 @@
  * to the {@link MarkerClusterer} constructor. The element in this array that is used to
  * style the cluster icon is determined by calling the `calculator` function.
  */
-import { Cluster } from "./cluster";
-import { OverlayViewSafe } from "./overlay-view-safe";
+import {Cluster} from './cluster';
+import {OverlayViewSafe} from './overlay-view-safe';
 
 /**
  *
  * @hidden
  */
-function toCssText(styles: { [key: string]: string }): string {
+function toCssText(styles: {[key: string]: string}): string {
   return Object.keys(styles)
     .reduce((acc, key) => {
       if (styles[key]) {
-        acc.push(key + ":" + styles[key]);
+        acc.push(key + ':' + styles[key]);
       }
       return acc;
     }, [])
-    .join(";");
+    .join(';');
 }
 
 /**
@@ -42,7 +42,7 @@ function toCssText(styles: { [key: string]: string }): string {
  * @hidden
  */
 function coercePixels(pixels: number): string {
-  return pixels ? pixels + "px" : undefined;
+  return pixels ? pixels + 'px' : undefined;
 }
 
 export interface ClusterIconStyle {
@@ -184,11 +184,11 @@ export class ClusterIcon extends OverlayViewSafe {
 
     const mc = this.cluster_.getMarkerClusterer();
 
-    const [major, minor] = google.maps.version.split(".");
+    const [major, minor] = google.maps.version.split('.');
 
     const gmVersion = parseInt(major, 10) * 100 + parseInt(minor, 10);
 
-    this.div_ = document.createElement("div");
+    this.div_ = document.createElement('div');
     if (this.visible_) {
       this.show();
     }
@@ -198,37 +198,37 @@ export class ClusterIcon extends OverlayViewSafe {
     // Fix for Issue 157
     this.boundsChangedListener_ = google.maps.event.addListener(
       this.getMap(),
-      "bounds_changed",
+      'bounds_changed',
       () => {
         cDraggingMapByCluster = cMouseDownInCluster;
       }
     );
 
-    google.maps.event.addDomListener(this.div_, "mousedown", () => {
+    google.maps.event.addDomListener(this.div_, 'mousedown', () => {
       cMouseDownInCluster = true;
       cDraggingMapByCluster = false;
     });
 
-    google.maps.event.addDomListener(this.div_, "contextmenu", () => {
+    google.maps.event.addDomListener(this.div_, 'contextmenu', () => {
       /**
        * This event is fired when a cluster marker contextmenu is requested.
        * @name MarkerClusterer#mouseover
        * @param {Cluster} c The cluster that the contextmenu is requested.
        * @event
        */
-      google.maps.event.trigger(mc, "contextmenu", this.cluster_);
+      google.maps.event.trigger(mc, 'contextmenu', this.cluster_);
     });
 
     // March 1, 2018: Fix for this 3.32 exp bug, https://issuetracker.google.com/issues/73571522
     // But it doesn't work with earlier releases so do a version check.
     if (gmVersion >= 332) {
       // Ugly version-dependent code
-      google.maps.event.addDomListener(this.div_, "touchstart", (e: Event) => {
+      google.maps.event.addDomListener(this.div_, 'touchstart', (e: Event) => {
         e.stopPropagation();
       });
     }
 
-    google.maps.event.addDomListener(this.div_, "click", (e: Event) => {
+    google.maps.event.addDomListener(this.div_, 'click', (e: Event) => {
       cMouseDownInCluster = false;
       if (!cDraggingMapByCluster) {
         /**
@@ -237,8 +237,8 @@ export class ClusterIcon extends OverlayViewSafe {
          * @param {Cluster} c The cluster that was clicked.
          * @event
          */
-        google.maps.event.trigger(mc, "click", this.cluster_);
-        google.maps.event.trigger(mc, "clusterclick", this.cluster_); // deprecated name
+        google.maps.event.trigger(mc, 'click', this.cluster_);
+        google.maps.event.trigger(mc, 'clusterclick', this.cluster_); // deprecated name
 
         // The default click handler follows. Disable it by setting
         // the zoomOnClick property to false.
@@ -265,24 +265,24 @@ export class ClusterIcon extends OverlayViewSafe {
       }
     });
 
-    google.maps.event.addDomListener(this.div_, "mouseover", () => {
+    google.maps.event.addDomListener(this.div_, 'mouseover', () => {
       /**
        * This event is fired when the mouse moves over a cluster marker.
        * @name MarkerClusterer#mouseover
        * @param {Cluster} c The cluster that the mouse moved over.
        * @event
        */
-      google.maps.event.trigger(mc, "mouseover", this.cluster_);
+      google.maps.event.trigger(mc, 'mouseover', this.cluster_);
     });
 
-    google.maps.event.addDomListener(this.div_, "mouseout", () => {
+    google.maps.event.addDomListener(this.div_, 'mouseout', () => {
       /**
        * This event is fired when the mouse moves out of a cluster marker.
        * @name MarkerClusterer#mouseout
        * @param {Cluster} c The cluster that the mouse moved out of.
        * @event
        */
-      google.maps.event.trigger(mc, "mouseout", this.cluster_);
+      google.maps.event.trigger(mc, 'mouseout', this.cluster_);
     });
   }
 
@@ -305,8 +305,8 @@ export class ClusterIcon extends OverlayViewSafe {
   draw(): void {
     if (this.visible_) {
       const pos = this.getPosFromLatLng_(this.center_);
-      this.div_.style.top = pos.y + "px";
-      this.div_.style.left = pos.x + "px";
+      this.div_.style.top = pos.y + 'px';
+      this.div_.style.left = pos.x + 'px';
     }
   }
 
@@ -315,7 +315,7 @@ export class ClusterIcon extends OverlayViewSafe {
    */
   hide(): void {
     if (this.div_) {
-      this.div_.style.display = "none";
+      this.div_.style.display = 'none';
     }
     this.visible_ = false;
   }
@@ -331,15 +331,15 @@ export class ClusterIcon extends OverlayViewSafe {
       );
 
       this.div_.innerHTML =
-        (this.style.url ? this.getImageElementHtml() : "") +
+        (this.style.url ? this.getImageElementHtml() : '') +
         this.getLabelDivHtml();
 
-      if (typeof this.sums_.title === "undefined" || this.sums_.title === "") {
+      if (typeof this.sums_.title === 'undefined' || this.sums_.title === '') {
         this.div_.title = this.cluster_.getMarkerClusterer().getTitle();
       } else {
         this.div_.title = this.sums_.title;
       }
-      this.div_.style.display = "";
+      this.div_.style.display = '';
     }
     this.visible_ = true;
   }
@@ -348,19 +348,19 @@ export class ClusterIcon extends OverlayViewSafe {
     const mc = this.cluster_.getMarkerClusterer();
     const ariaLabel = mc.ariaLabelFn(this.sums_.text);
 
-    const divStyle: { [key: string]: string } = {
-      position: "absolute",
+    const divStyle: {[key: string]: string} = {
+      position: 'absolute',
       top: coercePixels(this.anchorText_[0]),
       left: coercePixels(this.anchorText_[1]),
       color: this.style.textColor,
-      "font-size": coercePixels(this.style.textSize),
-      "font-family": this.style.fontFamily,
-      "font-weight": this.style.fontWeight,
-      "font-style": this.style.fontStyle,
-      "text-decoration": this.style.textDecoration,
-      "text-align": "center",
+      'font-size': coercePixels(this.style.textSize),
+      'font-family': this.style.fontFamily,
+      'font-weight': this.style.fontWeight,
+      'font-style': this.style.fontStyle,
+      'text-decoration': this.style.textDecoration,
+      'text-align': 'center',
       width: coercePixels(this.style.width),
-      "line-height": coercePixels(this.style.textLineHeight),
+      'line-height': coercePixels(this.style.textLineHeight),
     };
 
     return `
@@ -372,11 +372,11 @@ export class ClusterIcon extends OverlayViewSafe {
 
   private getImageElementHtml(): string {
     // NOTE: values must be specified in px units
-    const bp = (this.style.backgroundPosition || "0 0").split(" ");
-    const spriteH = parseInt(bp[0].replace(/^\s+|\s+$/g, ""), 10);
-    const spriteV = parseInt(bp[1].replace(/^\s+|\s+$/g, ""), 10);
+    const bp = (this.style.backgroundPosition || '0 0').split(' ');
+    const spriteH = parseInt(bp[0].replace(/^\s+|\s+$/g, ''), 10);
+    const spriteV = parseInt(bp[1].replace(/^\s+|\s+$/g, ''), 10);
 
-    let dimensions: { [key: string]: string } = {};
+    let dimensions: {[key: string]: string} = {};
 
     if (this.cluster_.getMarkerClusterer().getEnableRetinaIcons()) {
       dimensions = {
@@ -396,11 +396,11 @@ export class ClusterIcon extends OverlayViewSafe {
     }
 
     const overrideDimensionsDynamicIcon = this.sums_.url
-      ? { width: "100%", height: "100%" }
+      ? {width: '100%', height: '100%'}
       : {};
 
     const cssText = toCssText({
-      position: "absolute",
+      position: 'absolute',
       top: coercePixels(spriteV),
       left: coercePixels(spriteH),
       ...dimensions,
@@ -421,7 +421,7 @@ export class ClusterIcon extends OverlayViewSafe {
     let index = Math.max(0, sums.index - 1);
     index = Math.min(this.styles_.length - 1, index);
     this.style = this.sums_.url
-      ? { ...this.styles_[index], url: this.sums_.url }
+      ? {...this.styles_[index], url: this.sums_.url}
       : this.styles_[index];
 
     this.anchorText_ = this.style.anchorText || [0, 0];
@@ -432,8 +432,8 @@ export class ClusterIcon extends OverlayViewSafe {
 
     this.className_ =
       this.cluster_.getMarkerClusterer().getClusterClass() +
-      " " +
-      (this.style.className || "cluster-" + index);
+      ' ' +
+      (this.style.className || 'cluster-' + index);
   }
 
   /**
@@ -453,18 +453,18 @@ export class ClusterIcon extends OverlayViewSafe {
    */
   private createCss_(pos: google.maps.Point): string {
     return toCssText({
-      "z-index": `${this.cluster_.getMarkerClusterer().getZIndex()}`,
+      'z-index': `${this.cluster_.getMarkerClusterer().getZIndex()}`,
       top: coercePixels(pos.y),
       left: coercePixels(pos.x),
       width: coercePixels(this.style.width),
       height: coercePixels(this.style.height),
-      cursor: "pointer",
-      position: "absolute",
-      "-webkit-user-select": "none",
-      "-khtml-user-select": "none",
-      "-moz-user-select": "none",
-      "-o-user-select": "none",
-      "user-select": "none",
+      cursor: 'pointer',
+      position: 'absolute',
+      '-webkit-user-select': 'none',
+      '-khtml-user-select': 'none',
+      '-moz-user-select': 'none',
+      '-o-user-select': 'none',
+      'user-select': 'none',
     });
   }
 

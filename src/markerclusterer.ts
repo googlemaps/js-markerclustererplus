@@ -34,10 +34,10 @@
  *  deprecated. The new name is `click`, so please change your application code now.
  */
 
-import { ClusterIconInfo, ClusterIconStyle } from "./cluster-icon";
+import {ClusterIconInfo, ClusterIconStyle} from './cluster-icon';
 
-import { Cluster } from "./cluster";
-import { OverlayViewSafe } from "./overlay-view-safe";
+import {Cluster} from './cluster';
+import {OverlayViewSafe} from './overlay-view-safe';
 
 /**
  * @param text The text attribute of the cluster
@@ -272,12 +272,12 @@ export class MarkerClusterer extends OverlayViewSafe {
   /**
    * The default root name for the marker cluster images.
    */
-  static IMAGE_PATH = "../images/m";
+  static IMAGE_PATH = '../images/m';
 
   /**
    * The default extension name for the marker cluster images.
    */
-  static IMAGE_EXTENSION = "png";
+  static IMAGE_EXTENSION = 'png';
 
   /**
    * The default array of sizes for the marker cluster images.
@@ -291,7 +291,7 @@ export class MarkerClusterer extends OverlayViewSafe {
   private activeMap_: google.maps.Map = null;
   private ready_ = false;
 
-  public ariaLabelFn = this.options.ariaLabelFn || ((): string => "");
+  public ariaLabelFn = this.options.ariaLabelFn || ((): string => '');
 
   private zIndex_ =
     this.options.zIndex || Number(google.maps.Marker.MAX_ZINDEX) + 1;
@@ -299,15 +299,15 @@ export class MarkerClusterer extends OverlayViewSafe {
   private minClusterSize_ = this.options.minimumClusterSize || 2;
   private maxZoom_ = this.options.maxZoom || null;
   private styles_: ClusterIconStyle[] = this.options.styles || [];
-  private title_ = this.options.title || "";
+  private title_ = this.options.title || '';
 
-  private zoomOnClick_ = getOption(this.options, "zoomOnClick", true);
-  private averageCenter_ = getOption(this.options, "averageCenter", false);
+  private zoomOnClick_ = getOption(this.options, 'zoomOnClick', true);
+  private averageCenter_ = getOption(this.options, 'averageCenter', false);
 
-  private ignoreHidden_ = getOption(this.options, "ignoreHidden", false);
+  private ignoreHidden_ = getOption(this.options, 'ignoreHidden', false);
   private enableRetinaIcons_ = getOption(
     this.options,
-    "enableRetinaIcons",
+    'enableRetinaIcons',
     false
   );
 
@@ -319,7 +319,7 @@ export class MarkerClusterer extends OverlayViewSafe {
   private batchSize_ = this.options.batchSize || MarkerClusterer.BATCH_SIZE;
   private batchSizeIE_ =
     this.options.batchSizeIE || MarkerClusterer.BATCH_SIZE_IE;
-  private clusterClass_ = this.options.clusterClass || "cluster";
+  private clusterClass_ = this.options.clusterClass || 'cluster';
 
   private prevZoom_: number;
   private timerRefStatic: number;
@@ -337,7 +337,7 @@ export class MarkerClusterer extends OverlayViewSafe {
   ) {
     super();
 
-    if (navigator.userAgent.toLowerCase().indexOf("msie") !== -1) {
+    if (navigator.userAgent.toLowerCase().indexOf('msie') !== -1) {
       // Try to avoid IE timeout when processing a huge number of markers:
       this.batchSize_ = this.batchSizeIE_;
     }
@@ -362,11 +362,11 @@ export class MarkerClusterer extends OverlayViewSafe {
 
     // Add the map event listeners
     this.listeners_ = [
-      google.maps.event.addListener(this.getMap(), "zoom_changed", () => {
+      google.maps.event.addListener(this.getMap(), 'zoom_changed', () => {
         const map: google.maps.Map & {
           minZoom: number;
           maxZoom: number;
-          mapTypes: { [type: string]: google.maps.MapType };
+          mapTypes: {[type: string]: google.maps.MapType};
         } = this.getMap() as any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
         // Fix for bug #407
@@ -386,7 +386,7 @@ export class MarkerClusterer extends OverlayViewSafe {
           this.resetViewport_(false);
         }
       }),
-      google.maps.event.addListener(this.getMap(), "idle", () => {
+      google.maps.event.addListener(this.getMap(), 'idle', () => {
         this.redraw_();
       }),
     ];
@@ -440,7 +440,7 @@ export class MarkerClusterer extends OverlayViewSafe {
       const size = this.imageSizes_[i];
       this.styles_.push(
         MarkerClusterer.withDefaultStyle({
-          url: this.imagePath_ + (i + 1) + "." + this.imageExtension_,
+          url: this.imagePath_ + (i + 1) + '.' + this.imageExtension_,
           height: size,
           width: size,
         })
@@ -816,11 +816,11 @@ export class MarkerClusterer extends OverlayViewSafe {
    * @param marker The marker to add.
    */
   private pushMarkerTo_(
-    marker: google.maps.Marker & { isAdded?: boolean }
+    marker: google.maps.Marker & {isAdded?: boolean}
   ): void {
     // If the marker is draggable add a listener so we can update the clusters on the dragend:
     if (marker.getDraggable()) {
-      google.maps.event.addListener(marker, "dragend", () => {
+      google.maps.event.addListener(marker, 'dragend', () => {
         if (this.ready_) {
           marker.isAdded = false;
           this.repaint();
@@ -1084,9 +1084,9 @@ export class MarkerClusterer extends OverlayViewSafe {
 
     // Cancel previous batch processing if we're working on the first batch:
     if (iFirst === 0) {
-      google.maps.event.trigger(this, "clusteringbegin", this);
+      google.maps.event.trigger(this, 'clusteringbegin', this);
 
-      if (typeof this.timerRefStatic !== "undefined") {
+      if (typeof this.timerRefStatic !== 'undefined') {
         clearTimeout(this.timerRefStatic);
         delete this.timerRefStatic;
       }
@@ -1122,7 +1122,7 @@ export class MarkerClusterer extends OverlayViewSafe {
       }, 0);
     } else {
       delete this.timerRefStatic;
-      google.maps.event.trigger(this, "clusteringend", this);
+      google.maps.event.trigger(this, 'clusteringend', this);
 
       for (let i = 0; i < this.clusters_.length; i++) {
         this.clusters_[i].updateIcon();
@@ -1155,7 +1155,7 @@ export class MarkerClusterer extends OverlayViewSafe {
     return {
       text: count.toString(),
       index: index,
-      title: "",
+      title: '',
     };
   }
 
@@ -1167,14 +1167,14 @@ export class MarkerClusterer extends OverlayViewSafe {
    */
   static withDefaultStyle(overrides: ClusterIconStyle): ClusterIconStyle {
     return {
-      textColor: "black",
+      textColor: 'black',
       textSize: 11,
-      textDecoration: "none",
+      textDecoration: 'none',
       textLineHeight: overrides.height,
-      fontWeight: "bold",
-      fontStyle: "normal",
-      fontFamily: "Arial,sans-serif",
-      backgroundPosition: "0 0",
+      fontWeight: 'bold',
+      fontStyle: 'normal',
+      fontFamily: 'Arial,sans-serif',
+      backgroundPosition: '0 0',
       ...overrides,
     };
   }
