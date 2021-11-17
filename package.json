@@ -18,14 +18,14 @@
   },
   "license": "Apache-2.0",
   "author": "Justin Poehnelt",
-  "files": [
-    "dist/*",
-    "images/*"
-  ],
   "main": "dist/index.umd.js",
   "unpkg": "dist/index.min.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/*",
+    "images/*"
+  ],
   "scripts": {
     "docs": "typedoc src/index.ts && cp -r dist docs/dist && cp -r examples docs/examples",
     "format": "eslint . --fix",
@@ -37,6 +37,9 @@
   "devDependencies": {
     "@babel/preset-env": "^7.11.5",
     "@babel/runtime-corejs3": "^7.11.2",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-typescript": "^8.3.0",
     "@types/google.maps": "^3.44.2",
     "@types/jest": "^27.0.1",
     "@types/selenium-webdriver": "^4.0.9",
@@ -49,13 +52,12 @@
     "eslint-plugin-jest": "^25.0.1",
     "eslint-plugin-prettier": "^4.0.0",
     "geckodriver": "^2.0.0",
+    "install": "^0.13.0",
     "jest": "^26.4.2",
+    "npm": "^8.1.3",
     "prettier": "^2.1.1",
     "rollup": "^2.26.11",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.31.0",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "ts-jest": "^26.3.0",
     "typedoc": "^0.22.4",
