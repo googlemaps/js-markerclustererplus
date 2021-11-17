@@ -17,13 +17,11 @@ PERFORMANCE OF THIS SOFTWARE.
 var extendStatics = function(d, b) {
     extendStatics = Object.setPrototypeOf ||
         ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
     return extendStatics(d, b);
 };
 
 function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
     extendStatics(d, b);
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -301,7 +299,7 @@ var ClusterIcon = /** @class */ (function (_super) {
             "text-decoration": this.style.textDecoration,
             "text-align": "center",
             width: coercePixels(this.style.width),
-            "line-height": coercePixels(this.style.textLineHeight),
+            "line-height": coercePixels(this.style.textLineHeight)
         };
         return "\n<div aria-label=\"" + ariaLabel + "\" style=\"" + toCssText(divStyle) + "\" tabindex=\"0\">\n  <span aria-hidden=\"true\">" + this.sums_.text + "</span>\n</div>\n";
     };
@@ -314,7 +312,7 @@ var ClusterIcon = /** @class */ (function (_super) {
         if (this.cluster_.getMarkerClusterer().getEnableRetinaIcons()) {
             dimensions = {
                 width: coercePixels(this.style.width),
-                height: coercePixels(this.style.height),
+                height: coercePixels(this.style.height)
             };
         }
         else {
@@ -325,7 +323,7 @@ var ClusterIcon = /** @class */ (function (_super) {
                 -1 * spriteH,
             ], Y1 = _a[0], X1 = _a[1], Y2 = _a[2], X2 = _a[3];
             dimensions = {
-                clip: "rect(" + Y1 + "px, " + X1 + "px, " + Y2 + "px, " + X2 + "px)",
+                clip: "rect(" + Y1 + "px, " + X1 + "px, " + Y2 + "px, " + X2 + "px)"
             };
         }
         var overrideDimensionsDynamicIcon = this.sums_.url
@@ -383,7 +381,7 @@ var ClusterIcon = /** @class */ (function (_super) {
             "-khtml-user-select": "none",
             "-moz-user-select": "none",
             "-o-user-select": "none",
-            "user-select": "none",
+            "user-select": "none"
         });
     };
     /**
@@ -760,7 +758,7 @@ var MarkerClusterer = /** @class */ (function (_super) {
             this.styles_.push(MarkerClusterer.withDefaultStyle({
                 url: this.imagePath_ + (i + 1) + "." + this.imageExtension_,
                 height: size,
-                width: size,
+                width: size
             }));
         }
     };
@@ -1373,7 +1371,7 @@ var MarkerClusterer = /** @class */ (function (_super) {
         return {
             text: count.toString(),
             index: index,
-            title: "",
+            title: ""
         };
     };
     /**
