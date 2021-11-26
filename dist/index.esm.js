@@ -301,7 +301,7 @@ var ClusterIcon = /** @class */ (function (_super) {
             width: coercePixels(this.style.width),
             "line-height": coercePixels(this.style.textLineHeight)
         };
-        return "\n<div aria-label=\"" + ariaLabel + "\" style=\"" + toCssText(divStyle) + "\" tabindex=\"0\">\n  <span aria-hidden=\"true\">" + this.sums_.text + "</span>\n</div>\n";
+        return "\n<div aria-label=\"".concat(ariaLabel, "\" style=\"").concat(toCssText(divStyle), "\" tabindex=\"0\">\n  <span aria-hidden=\"true\">").concat(this.sums_.text, "</span>\n</div>\n");
     };
     ClusterIcon.prototype.getImageElementHtml = function () {
         // NOTE: values must be specified in px units
@@ -323,14 +323,14 @@ var ClusterIcon = /** @class */ (function (_super) {
                 -1 * spriteH,
             ], Y1 = _a[0], X1 = _a[1], Y2 = _a[2], X2 = _a[3];
             dimensions = {
-                clip: "rect(" + Y1 + "px, " + X1 + "px, " + Y2 + "px, " + X2 + "px)"
+                clip: "rect(".concat(Y1, "px, ").concat(X1, "px, ").concat(Y2, "px, ").concat(X2, "px)")
             };
         }
         var overrideDimensionsDynamicIcon = this.sums_.url
             ? { width: "100%", height: "100%" }
             : {};
         var cssText = toCssText(__assign(__assign({ position: "absolute", top: coercePixels(spriteV), left: coercePixels(spriteH) }, dimensions), overrideDimensionsDynamicIcon));
-        return "<img alt=\"" + this.sums_.text + "\" aria-hidden=\"true\" src=\"" + this.style.url + "\" style=\"" + cssText + "\"/>";
+        return "<img alt=\"".concat(this.sums_.text, "\" aria-hidden=\"true\" src=\"").concat(this.style.url, "\" style=\"").concat(cssText, "\"/>");
     };
     /**
      * Sets the icon styles to the appropriate element in the styles array.
@@ -370,7 +370,7 @@ var ClusterIcon = /** @class */ (function (_super) {
      */
     ClusterIcon.prototype.createCss_ = function (pos) {
         return toCssText({
-            "z-index": "" + this.cluster_.getMarkerClusterer().getZIndex(),
+            "z-index": "".concat(this.cluster_.getMarkerClusterer().getZIndex()),
             top: coercePixels(pos.y),
             left: coercePixels(pos.x),
             width: coercePixels(this.style.width),
